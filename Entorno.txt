@@ -1,5 +1,0 @@
-<<<<<<< HEAD
-AArchivo problema
-=======
-AArchivo problema2
->>>>>>> pruebas
