@@ -1,33 +1,34 @@
 //Import de tiempo
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Producto {
     //Atributos del Objeto Producto
     private String nombre;
     private String descripcion;
     private int id_producto;
-    private int precio;
+    private double precio;
     private int Stock;
     private String imagen;
-    private int id_categoria;
-    private LocalDateTime fechaCreacion;
+    private String Categoria;
+    private LocalDate fechaCreacion;
     private boolean descontinuado;
 
     
     //Constructor,Setter del Producto
-    public Producto(String nombre, String descripcion, int id_producto, int precio, int Stock,String imagen, int id_categoria,LocalDateTime fechaCreacion,boolean descontinuado){
+    public Producto(String nombre, String descripcion, int id_producto, double precio, int Stock,String imagen, String Categoria,LocalDate fechaCreacion,boolean descontinuado){
         this.nombre=nombre;
         this.descripcion=descripcion;
         this.id_producto=id_producto;
         this.precio=precio;
         this.Stock=Stock;
         this.imagen=imagen;
-        this.id_categoria=id_categoria;
-        this.fechaCreacion=LocalDateTime.now();
+        this.Categoria=Categoria;
+        this.fechaCreacion=LocalDate.now();
         this.descontinuado=descontinuado;
         
     }
-//Getters0
+//Getters
    public String getNombre() {
         return nombre;
     }
@@ -46,7 +47,7 @@ public class Producto {
 
 
 
-    public int getPrecio() {
+    public double getPrecio() {
         return precio;
     }
 
@@ -64,13 +65,13 @@ public class Producto {
 
 
 
-    public int getId_categoria() {
-        return id_categoria;
+    public String getCategoria() {
+        return Categoria;
     }
 
 
 
-    public LocalDateTime getFechaCreacion() {
+    public LocalDate getFechaCreacion() {
         return fechaCreacion;
     }
     public boolean getdescontinuado(){
@@ -83,24 +84,27 @@ public class Producto {
     //Funcion para enseñar el Producto en formato String.
     @Override
     public String toString() {
-        return nombre +"\t"+ descripcion +"\t"+id_producto+"\t"+precio+"\t"+Stock+"\t"+imagen+"\t"+id_categoria+"\t"+fechaCreacion;
+        return nombre +"\t"+ descripcion +"\t"+id_producto+"\t"+precio+"\t"+Stock+"\t"+imagen+"\t"+Categoria+"\t"+fechaCreacion;
 
     }
 
     public boolean isDescontinuado() {
+        //Hay que leer el dato descontinuado y transferirlo a booleano
         return descontinuado;
     }
 
     public void setDescontinuado(boolean descontinuado) {
-        this.descontinuado = descontinuado;
+
+        this.descontinuado = descontinuado; // if descontinuado equals si, entonces descontinuado = true
     }
 
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+    public void setFechaCreacion(LocalDate fechaCreacion) {
+        
         this.fechaCreacion = fechaCreacion;
     }
 
-    public void setId_categoria(int id_categoria) {
-        this.id_categoria = id_categoria;
+    public void setCategoria(String Categoria) {
+        this.Categoria = Categoria;
     }
 
     public void setImagen(String imagen) {
@@ -111,7 +115,7 @@ public class Producto {
         this.Stock = Stock;
     }
 
-    public void setPrecio(int precio) {
+    public void setPrecio(double precio) {
         this.precio = precio;
     }
 

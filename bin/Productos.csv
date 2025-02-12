@@ -1,2 +1,11 @@
-Nombre\Descripción\Precio\Stock disponible\Categoría\Imagen (link)
-
+ID Producto,Nombre,Descripcion,Precio,Stock Disponible,Categoria,Fecha Creacion,Descontinuado,Imagen
+1,Pantalón Deportivo Ajustado,Pantalón ajustado de material flexible ideal para actividades de alto rendimiento.,29.99,50,Pantalones,2024-01-12,No,https://lc.cx/78PKGC
+2,Sudadera con Capucha de Algodón,Sudadera cómoda y cálida con capucha y bolsillo frontal.,39.99,40,Sudaderas,2024-01-18,No,https://lc.cx/H6Q9_6
+3,Camiseta Deportiva de Manga Corta,Camiseta ligera de secado rápido y perfecta para entrenamientos intensos.,19.99,60,Camisetas,2024-01-25,No,https://lc.cx/ySunzO
+4,Camisa Deportiva de Secado Rápido,Camisa de manga larga con tecnología de secado rápido e ideal para deportes al aire libre.,34.99,30,Camisas,2024-01-28,No,https://lc.cx/Ve71WD
+5,Chaqueta Impermeable Ligera,Chaqueta deportiva con material impermeable e ideal para condiciones meteorológicas cambiantes.,59.99,25,,2024-02-05,No,https://lc.cx/3N-OJ1
+6,Pantalón Jogger Deportivo,Jogger cómodo de tejido transpirable perfecto para actividades al aire libre.,39.99,45,Pantalones,2024-02-08,No,https://lc.cx/QJEyjy
+7,Sudadera Deportiva de Terciopelo,Sudadera moderna de terciopelo suave e ideal para descansar o entrenar en clima frío.,49.99,35,Sudaderas,2024-02-10,No,https://lc.cx/ccU-Db
+8,Camiseta Sin Mangas de Compresión,Camisa sin mangas de compresión para mejorar el rendimiento durante el entrenamiento.,24.99,50,Camisetas,2024-01-20,No,https://lc.cx/KJLmSy
+9,Camisa Polo Deportiva,Camisa de polo deportiva cómoda e ideal para actividades de baja intensidad.,29.99,20,Camisas,2024-01-15,No,https://lc.cx/SESnen
+10,Chaqueta Polar de Entrenamiento,Chaqueta ligera de forro polar para mantenerte abrigado durante entrenamientos al aire libre.,64.99,30,Chaquetas,2024-02-03,No,https://lc.cx/7r5zf

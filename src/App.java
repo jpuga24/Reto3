@@ -41,8 +41,8 @@ public class App {
             }
         }
     } catch (Exception e) {
-        System.out.println("Error en el valor introducido!");
-    }
+        //Prevencion de errores
+        System.err.println("Error no se ha ingresado un valor valido");    }
         return true;
 
     }
@@ -50,6 +50,7 @@ public class App {
 
     //Main
     public static void main(String[] args) throws Exception {
+        //Inicializacion de variables
         int opcionUsuario;
         GestorProductos gestor=new GestorProductos();
         Scanner sc=new Scanner(System.in);
@@ -106,7 +107,7 @@ public class App {
                 break;
         }
             
-        } while (opcionUsuario>=7 || opcionUsuario<0);
+        } while (opcionUsuario>=7 || opcionUsuario<0); //Bucle condicional por si se ingresa un valor no disponible en las opciones
         
     }
 }
