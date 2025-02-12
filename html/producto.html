@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UsurbilTex</title>
+    <link rel="stylesheet" href="css/producto.css">
+    <link rel="shortcut icon" href="imgs/LogoSoloSinFondo.png" type="image/x-icon">
+    <script src="js/script.js" defer></script>
+</head>
+<body>
+    <header>
+        <img src="imgs/LogoSoloSinFondo.png" id="LogoNav">
+        <nav class="Navegador">
+            <ul>
+                <li><img src="imgs/Usuarioicono.png" alt=""></li>
+                <li><img src="imgs/CestaIcono.png" alt=""></li>
+                <li><img src="imgs/BuscadorIcono.png" alt=""></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div id="categorias">
+            <h2>Categorías disponibles</h2>
+            <div class="categoria" onclick="mostrarCategoria('Camisas')">
+                <img src="imgs/camisa.png" alt="Camisas">
+                <span>Camisas</span>
+            </div>
+            <div class="categoria" onclick="mostrarCategoria('Camisetas')">
+                <img src="imgs/camiDepor1.png" alt="Camisetas">
+                <span>Camisetas</span>
+            </div>
+            <div class="categoria" onclick="mostrarCategoria('Pantalones')">
+                <img src="imgs/pantalonesdepor1.png" alt="Pantalones">
+                <span>Pantalones</span>
+            </div>
+            <div class="categoria" onclick="mostrarCategoria('Sudaderas')">
+                <img src="imgs/sudaderadepor.png" alt="Sudaderas">
+                <span>Sudaderas</span>
+            </div>
+            <div class="categoria" onclick="mostrarCategoria('Chaquetas')">
+                <img src="imgs/chaquetNike.png" alt="Chaquetas">
+                <span>Chaquetas</span>
+            </div>
+        </div>
+
+        <div id="productos" style="display: none;">
+            <button onclick="volverInicio()">← Volver</button>
+            <h2 id="categoriaTitulo"></h2>
+            <div id="productosLista"></div>
+        </div>
+
+        <div id="detalle" style="display: none;">
+            <button onclick="volverInicio()">← Volver</button>
+            <h2 id="detalleTitulo"></h2>
+            <img id="detalleImagen" src="" alt="Producto">
+            <p id="detalleDescripcion"></p>
+            <p id="detallePrecio"></p>
+            <button>Añadir a la cesta</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="free"><strong>ENVÍO GRATIS A PARTIR DE 40€</strong></div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,36 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffd700;
+    padding: 10px 20px;
+}
+
+#LogoNav{
+    height: 50px;
+}
+
+.Navegador ul{
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+}
+
+.Navegador li{
+    display: flex;
+    align-items: center;
+}
+
+.Navegador img{
+    width: 30px;
+    height: auto;
+    cursor:pointer;
+}

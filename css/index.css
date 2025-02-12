@@ -1,0 +1,95 @@
+*{
+    margin: 0;
+    padding: 0;
+    
+}
+
+.Navegador h1{
+    text-align: center;
+    font-family:"IBM Plex Serif", serif;
+    animation-name: Aparecer;
+    text-shadow: 5px 5px 5px rgb(144, 110, 0);
+    animation-duration: 4s;
+    font-size: 3rem;
+}
+@keyframes Aparecer {
+    from{opacity:0%;}
+    to{opacity: 100%;}
+    
+}
+
+#LogoNav{
+    padding: 0px;
+    margin: 0px;
+    height: 5rem;
+    width: 5rem;
+    padding-left: 1rem;
+
+    
+    
+}
+
+#LogoNav:hover{
+    cursor: pointer;
+    filter: invert();
+    
+}
+
+.Navegador ul{
+    list-style-type: none;
+    direction: rtl;
+    
+    
+}
+.Navegador{
+    background-color: #E3C205;
+    padding: 20px 0;
+    margin: 0px;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+
+
+
+
+.Navegador img{
+    height: 2rem;
+    width: 2rem;
+    padding: 1rem;
+
+        
+}
+
+.Navegador li{
+    display: inline;
+    z-index: 1;
+}
+
+.Navegador img:hover{
+    cursor: pointer;
+    filter: invert();
+    
+}
+
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+
+.Descuento img{
+        position: relative;
+        width: 100%;
+        height: 31rem;
+        background-image: url('/imgs/Rebajas.png');
+        background-size:cover;
+        background-position: center;
+        background-repeat: no-repeat;
+  
+}
+
