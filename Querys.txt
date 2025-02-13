@@ -1,0 +1,41 @@
+TOTAL GANANCIAS:
+
+SELECT SUM(PrecioTotal) as TotalGanancias FROM pedidos ;
+
+
+Productos con stock bajo:
+
+SELECT Nombre as Productos_BajoStock FROM productos WHERE Stock<5;
+
+
+Clientes con mas pedidos:
+
+SELECT u.id_user, u.nombre, COUNT(p.id_pedido) AS total_pedidos
+FROM usuario u
+JOIN pedidos p ON u.id_user = p.id_user
+GROUP BY u.id_user, u.nombre
+ORDER BY total_pedidos DESC
+LIMIT 10;
+
+
+ganancias por mes:
+SELECT MONTH(FechaPedido)as mes,SUM(PrecioTotal)as ganancias FROM pedidos GROUP BY mes ORDER BY mes ASC ;
+
+
+productos nunca comprados:
+
+SELECT p.id_producto as PRODUCTO_ID, p.nombre as PRODUCTOS_MENOS_COMPRADOS FROM productos p LEFT JOIN detalle_pedido dp ON p.id_producto = dp.id_producto WHERE dp.id_producto IS NULL;
+
+
+Productos que han generado más de 500€ de ganancia:
+
+SELECT p.id_producto,
+ ->p.nombre,
+ ->SUM(dp.Cantidad * dp.Precio) AS ganancia
+ -> FROM productos p
+ -> JOIN detalle_pedido dp ON p.id_producto = dp.id_producto
+ -> GROUP BY p.id_producto, p.nombre
+ -> HAVING ganancia > 500
+ -> ORDER BY ganancia DESC;
+
+
