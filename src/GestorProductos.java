@@ -1,8 +1,15 @@
 import java.io.*;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
 
 
 public class GestorProductos {
@@ -11,6 +18,10 @@ public class GestorProductos {
     private String User="root";
     private String Url="jdbc:mysql://localhost:3306/usurbiltex";
     private String Pass="Lymprr1982@!";
+    private Scanner scanner;
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
+    }
     private ArrayList<Producto> productos = new ArrayList<>();
     //Metodos para manipular productos
     public void AgregarProd(Producto producto) {
@@ -65,216 +76,285 @@ public class GestorProductos {
         return false;
     }
     
-public void FicheroCSV() throws IOException {
-    System.out.println("Cargando fichero...");
+    public void FicheroCSV() throws IOException {
+        System.out.println("Cargando fichero...");
+    
+        // Ruta absoluta del archivo CSV
+        String rutaArchivo = "C:\\Users\\Miguel Campo\\Desktop\\Usurbiltex\\AplicacionJava\\src\\Productos.csv";
+    
+        // Verificar si el archivo existe
+        File archivo = new File(rutaArchivo);
+        if (!archivo.exists()) {
+            System.out.println("El archivo no existe en la ruta especificada: " + rutaArchivo);
+            return;
+        }
+    
+        // Intentar leer el archivo
+        try (BufferedReader ProdCsv = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            String encabezadoCsv = ProdCsv.readLine(); // Descartar la primera línea (encabezado)
+    
+            // Verificar si el archivo está vacío
+            if (encabezadoCsv == null) {
+                System.out.println("El archivo está vacío.");
+                return;
+            }
+    
+            while ((linea = ProdCsv.readLine()) != null) {
+                if (linea.isEmpty()) continue; // Saltar línea vacía
+    
+                // Separar los valores por comas
+                String[] Csvtemp = linea.split(",");
+    
+                // Verificar que la línea tenga el número esperado de columnas
+                if (Csvtemp.length == 9) {
+                    try {
+                        int id_producto = Integer.parseInt(Csvtemp[0].trim());
+                        String nombre = Csvtemp[1].trim();
+                        String descripcion = Csvtemp[2].trim();
+                        double precio = Double.parseDouble(Csvtemp[3].trim());
+                        int Stock = Integer.parseInt(Csvtemp[4].trim());
+                        
+                        // Convertir el nombre de la categoría a un id numérico
+                        String categoriaStr = Csvtemp[5].trim();
+                        int id_categoria;
+                        switch (categoriaStr.toLowerCase()) {
+                            case "pantalones":
+                                id_categoria = 1;
+                                break;
+                            case "sudaderas":
+                                id_categoria = 2;
+                                break;
+                            case "camisetas":
+                                id_categoria = 3;
+                                break;
+                            case "camisas":
+                                id_categoria = 4;
+                                break;
+                            case "chaquetas":
+                                id_categoria = 5;
+                                break;
+                            default:
+                                System.out.println("Categoría desconocida: " + categoriaStr + ". Línea ignorada.");
+                                continue; // O asignar un valor por defecto
+                        }
+                        
+                        LocalDate fechaCreacion = LocalDate.parse(Csvtemp[6].trim());
+                        String descontinuado = Csvtemp[7].trim();
+                        String imagen = Csvtemp[8].trim();
+    
+                        // Crear el objeto Producto y agregarlo a la lista
+                        Producto producto = new Producto(nombre, descripcion, precio, Stock, id_producto, id_categoria, imagen, descontinuado, fechaCreacion);
+                        productos.add(producto);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error al procesar la línea: " + linea);
+                        e.printStackTrace(); // Para obtener más detalles del error
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Error al parsear la fecha en la línea: " + linea);
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.out.println("Línea con formato incorrecto: " + linea);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo: " + e.getMessage());
+            e.printStackTrace();
+        }
+    
+        System.out.println("Fichero cargado correctamente.");
+    
+        // Imprimir los datos desglosados de cada producto
+        System.out.println("Productos cargados:");
+        for (Producto p : productos) {
+            System.out.println("------------------------------------------------");
+            System.out.println("ID: " + p.getId_producto());
+            System.out.println("Nombre: " + p.getNombre());
+            System.out.println("Descripción: " + p.getDescripcion());
+            System.out.println("Precio: " + p.getPrecio());
+            System.out.println("Stock: " + p.getStock());
+            System.out.println("Categoría (ID): " + p.getId_categoria());
+            System.out.println("Fecha de Creación: " + p.getFechaCreacion());
+            System.out.println("Descontinuado: " + p.getDescontinuado());
+            System.out.println("Imagen: " + p.getImagen());
+        }
+        System.out.println("------------------------------------------------");
+    }
 
-    try (BufferedReader ProdCsv = new BufferedReader(new FileReader("src\\Productos.csv"))) { //Ruta relativa para prevenir errores
-        String linea; //Variable para linea
-        String encabezadoCsv = ProdCsv.readLine(); //Descartar la primera linea
-        while ((linea = ProdCsv.readLine()) != null) { //Mientras la linea no este vacia 
-            if (linea.isEmpty()) continue; //si hay espacio vacio saltar a la siguiente linea
-
-            // separa las comas
-            String[] Csvtemp = linea.split(",");
-            //Condicion del array temporal
-            if (Csvtemp.length == 9) { 
+    public void ActualizarProd() {
+        try (Connection con = DriverManager.getConnection(Url, User, Pass)) {
+            // Solicitar al usuario el nombre del producto a buscar
+            System.out.println("Ingrese el nombre del producto a buscar:");
+            String busqueda = sc.nextLine();
+    
+            // Buscar en la base de datos los productos que coincidan por nombre
+            String queryActu = "SELECT * FROM productos WHERE Nombre LIKE ?";
+            try (PreparedStatement ps = con.prepareStatement(queryActu)) {
+                ps.setString(1, "%" + busqueda + "%");
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.isBeforeFirst()) { // No hay resultados
+                        System.out.println("No se encontraron productos con ese nombre.");
+                        return;
+                    }
+                    // Mostrar productos encontrados
+                    System.out.println("Productos encontrados:");
+                    while (rs.next()) {
+                        System.out.printf("ID: %d | Nombre: %s | Descripción: %s | Precio: %.2f | Stock: %d | Categoría: %d | Imagen: %s%n",
+                                rs.getInt("id_producto"),
+                                rs.getString("Nombre"),
+                                rs.getString("Descripcion"),
+                                rs.getDouble("Precio"),
+                                rs.getInt("Stock"),
+                                rs.getInt("Id_categoria"),
+                                rs.getString("Imagen"));
+                    }
+                }
+            }
+    
+            // Solicitar al usuario el ID del producto a actualizar
+            System.out.println("\nIntroduce el ID del producto a actualizar:");
+            int id = sc.nextInt();
+            sc.nextLine(); // Limpiar el buffer
+    
+            // Menú para actualizar los campos
+            int opcion;
+            do {
+                System.out.println("\nSeleccione el campo que desea actualizar:");
+                System.out.println("1. Nombre del producto");
+                System.out.println("2. Descripción del producto");
+                System.out.println("3. Precio del producto");
+                System.out.println("4. Cantidad en stock");
+                System.out.println("5. Id_categoría del producto");
+                System.out.println("6. URL de la imagen");
+                System.out.println("0. Volver al menú principal");
+                System.out.print("Elige una opción: ");
+    
                 try {
-                    //Separar los datos por Atributos
-                    int id_producto = Integer.parseInt(Csvtemp[0]);
-                    String nombre = Csvtemp[1];
-                    String descripcion = Csvtemp[2];
-                    double precio = Double.parseDouble(Csvtemp[3]);
-                    int Stock = Integer.parseInt(Csvtemp[4]);
-                    int Id_categoria = Integer.parseInt(Csvtemp[5]);
-                    LocalDate fechaCreacion = LocalDate.parse(Csvtemp[6]); // Ajusta el formato si es necesario
-                    String descontinuado = Csvtemp[7];
-                    String imagen = Csvtemp[8];
-                    Producto producto = new Producto(nombre, descripcion, precio, Stock, id_producto, Id_categoria, imagen, descontinuado, fechaCreacion);
-                    productos.add(producto); 
-                } catch (NumberFormatException e) {
-                    System.out.println("Error al procesar linea: " + linea);
+                    opcion = sc.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Entrada inválida.");
+                    sc.nextLine(); // Limpiar buffer
+                    opcion = -1;
+                    continue;
                 }
-            } else {
-                System.out.println("Linea con formato incorrecto: " + linea);
-            }
-        }
-    }
-    System.out.println("Fichero cargado correctamente.");
-}
-
-
-public void ActualizarProd() {
-    try (Connection con = DriverManager.getConnection(Url, User, Pass)) {
-        //Pedir al usuario el nombre del producto a buscar
-        sc.nextLine(); 
-        System.out.println("Ingrese el nombre del producto a buscar:");
-        String busqueda = sc.nextLine();
-
-        //Buscar en la base de datos los productos que coincidan por nombre
-        String queryActu = "SELECT * FROM productos WHERE Nombre LIKE ?";
-        try (PreparedStatement ps = con.prepareStatement(queryActu)) {
-            ps.setString(1, "%" + busqueda + "%");
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.isBeforeFirst()) { // No hay resultados
-                    System.out.println("No se encontraron productos con ese nombre.");
-                    return;
-                }
-                // Mostrar productos encontrados
-                System.out.println("Productos encontrados:");
-                while (rs.next()) {
-                    System.out.printf("ID: %d | Nombre: %s | Descripción: %s | Precio: %.2f | Stock: %d | Categoría: %s | Imagen: %s%n",
-                            rs.getInt("id_producto"),
-                            rs.getString("Nombre"),
-                            rs.getString("Descripcion"),
-                            rs.getDouble("Precio"),
-                            rs.getInt("Stock"),
-                            rs.getInt("Id_categoria"),
-                            rs.getString("Imagen"));
-                }
-            }
-        }
-
-        //Solicitar al usuario el ID del producto a actualizar
-        System.out.println("\nIntroduce el ID del producto a actualizar:");
-        int id = sc.nextInt();
-        sc.nextLine(); // Limpiar el buffer
-
-        //Menú para actualizar los campos
-        int opcion;
-        do {
-            System.out.println("\nSeleccione el campo que desea actualizar:");
-            System.out.println("1. Nombre del producto");
-            System.out.println("2. Descripción del producto");
-            System.out.println("3. Precio del producto");
-            System.out.println("4. Cantidad en stock");
-            System.out.println("5. Id_categoría del producto");
-            System.out.println("6. URL de la imagen");
-            System.out.println("0. Volver al menú principal");
-            System.out.print("Elige una opción: ");
-
-            try {
-                opcion = sc.nextInt();
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida.");
                 sc.nextLine(); // Limpiar buffer
-                opcion = -1;
-                continue;
-            }
-            sc.nextLine(); // Limpiar buffer
+    
+                String queryUpdate;
+                switch (opcion) {
+                    case 0:
+                        System.out.println("Volviendo al menú principal.");
+                        break;
+                    case 1:
+                        System.out.print("Nuevo nombre: ");
+                        String nuevoNombre = sc.nextLine();
+                        queryUpdate = "UPDATE productos SET Nombre = ? WHERE id_producto = ?";
+                        try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
+                            ps.setString(1, nuevoNombre);
+                            ps.setInt(2, id);
+                            if (ps.executeUpdate() > 0) {
+                                System.out.println("Nombre actualizado.");
+                            } else {
+                                System.out.println("No se actualizó el nombre.");
+                            }
+                        } catch (SQLException e) {
+                            System.out.println("Error al actualizar nombre: " + e.getMessage());
+                        }
+                        break;
+                    case 2:
+                        System.out.print("Nueva descripción: ");
+                        String nuevaDesc = sc.nextLine();
+                        queryUpdate = "UPDATE productos SET Descripcion = ? WHERE id_producto = ?";
+                        try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
+                            ps.setString(1, nuevaDesc);
+                            ps.setInt(2, id);
+                            if (ps.executeUpdate() > 0) {
+                                System.out.println("Descripción actualizada.");
+                            } else {
+                                System.out.println("No se actualizó la descripción.");
+                            }
+                        } catch (SQLException e) {
+                            System.out.println("Error al actualizar descripción: " + e.getMessage());
+                        }
+                        break;
+                    case 3:
+                        System.out.print("Nuevo precio: ");
+                        double nuevoPrecio = sc.nextDouble();
+                        sc.nextLine();
+                        queryUpdate = "UPDATE productos SET Precio = ? WHERE id_producto = ?";
+                        try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
+                            ps.setDouble(1, nuevoPrecio);
+                            ps.setInt(2, id);
+                            if (ps.executeUpdate() > 0) {
+                                System.out.println("Precio actualizado.");
+                            } else {
+                                System.out.println("No se actualizó el precio.");
+                            }
+                        } catch (SQLException e) {
+                            System.out.println("Error al actualizar precio: " + e.getMessage());
+                        }
+                        break;
+                    case 4:
+                        System.out.print("Nuevo stock: ");
+                        int nuevoStock = sc.nextInt();
+                        sc.nextLine();
+                        queryUpdate = "UPDATE productos SET Stock = ? WHERE id_producto = ?";
+                        try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
+                            ps.setInt(1, nuevoStock);
+                            ps.setInt(2, id);
+                            if (ps.executeUpdate() > 0) {
+                                System.out.println("Stock actualizado.");
+                            } else {
+                                System.out.println("No se actualizó el stock.");
+                            }
+                        } catch (SQLException e) {
+                            System.out.println("Error al actualizar stock: " + e.getMessage());
+                        }
+                        break;
+                    case 5:
+                        System.out.print("Nueva categoría: ");
+                        int nuevaCat = sc.nextInt();
+                        sc.nextLine();
+                        queryUpdate = "UPDATE productos SET Id_categoria = ? WHERE id_producto = ?";
+                        try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
+                            ps.setInt(1, nuevaCat);
+                            ps.setInt(2, id);
+                            if (ps.executeUpdate() > 0) {
+                                System.out.println("Categoría actualizada.");
+                            } else {
+                                System.out.println("No se actualizó la categoría.");
+                            }
+                        } catch (SQLException e) {
+                            System.out.println("Error al actualizar categoría: " + e.getMessage());
+                        }
+                        break;
+                    case 6:
+                        System.out.print("Nuevo link de imagen: ");
+                        String nuevoImg = sc.nextLine();
+                        queryUpdate = "UPDATE productos SET Imagen = ? WHERE id_producto = ?";
+                        try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
+                            ps.setString(1, nuevoImg);
+                            ps.setInt(2, id);
+                            if (ps.executeUpdate() > 0) {
+                                System.out.println("Imagen actualizada.");
+                            } else {
+                                System.out.println("No se actualizó la imagen.");
+                            }
+                        } catch (SQLException e) {
+                                                    System.out.println("Error al actualizar imagen: " + e.getMessage());
+                                                }
+                                                break;
+                                            default:
+                                                System.out.println("Opción no válida.");
+                                                break;
+                                        }
+                                    } while (opcion != 0);
+                                } catch (SQLException e) {
+                                    System.out.println("Error al acceder a la base de datos: " + e.getMessage());
+                                }
+                            }
+                        
 
-            String queryUpdate;
-            switch (opcion) {
-                case 0:
-                    System.out.println("Volviendo al menú principal.");
-                    break;
-                case 1:
-                    System.out.print("Nuevo nombre: ");
-                    String nuevoNombre = sc.nextLine();
-                    queryUpdate = "UPDATE productos SET Nombre = ? WHERE id_producto = ?";
-                    try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
-                        ps.setString(1, nuevoNombre);
-                        ps.setInt(2, id);
-                        if (ps.executeUpdate() > 0) {
-                            System.out.println("Nombre actualizado.");
-                        } else {
-                            System.out.println("No se actualizó el nombre.");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Error al actualizar nombre: " + e.getMessage());
-                    }
-                    break;
-                case 2:
-                    System.out.print("Nueva descripción: ");
-                    String nuevaDesc = sc.nextLine();
-                    queryUpdate = "UPDATE productos SET Descripcion = ? WHERE id_producto = ?";
-                    try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
-                        ps.setString(1, nuevaDesc);
-                        ps.setInt(2, id);
-                        if (ps.executeUpdate() > 0) {
-                            System.out.println("Descripción actualizada.");
-                        } else {
-                            System.out.println("No se actualizó la descripción.");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Error al actualizar descripción: " + e.getMessage());
-                    }
-                    break;
-                case 3:
-                    System.out.print("Nuevo precio: ");
-                    double nuevoPrecio = sc.nextDouble();
-                    sc.nextLine();
-                    queryUpdate = "UPDATE productos SET Precio = ? WHERE id_producto = ?";
-                    try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
-                        ps.setDouble(1, nuevoPrecio);
-                        ps.setInt(2, id);
-                        if (ps.executeUpdate() > 0) {
-                            System.out.println("Precio actualizado.");
-                        } else {
-                            System.out.println("No se actualizó el precio.");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Error al actualizar precio: " + e.getMessage());
-                    }
-                    break;
-                case 4:
-                    System.out.print("Nuevo stock: ");
-                    int nuevoStock = sc.nextInt();
-                    sc.nextLine();
-                    queryUpdate = "UPDATE productos SET Stock = ? WHERE id_producto = ?";
-                    try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
-                        ps.setInt(1, nuevoStock);
-                        ps.setInt(2, id);
-                        if (ps.executeUpdate() > 0) {
-                            System.out.println("Stock actualizado.");
-                        } else {
-                            System.out.println("No se actualizó el stock.");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Error al actualizar stock: " + e.getMessage());
-                    }
-                    break;
-                case 5:
-                    System.out.print("Nueva categoría: ");
-                    String nuevaCat = sc.nextLine();
-                    queryUpdate = "UPDATE productos SET Categoria = ? WHERE id_producto = ?";
-                    try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
-                        ps.setString(1, nuevaCat);
-                        ps.setInt(2, id);
-                        if (ps.executeUpdate() > 0) {
-                            System.out.println("Categoría actualizada.");
-                        } else {
-                            System.out.println("No se actualizó la categoría.");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Error al actualizar categoría: " + e.getMessage());
-                    }
-                    break;
-                case 6:
-                    System.out.print("Nuevo link de imagen: ");
-                    String nuevoImg = sc.nextLine();
-                    queryUpdate = "UPDATE productos SET Imagen = ? WHERE id_producto = ?";
-                    try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
-                        ps.setString(1, nuevoImg);
-                        ps.setInt(2, id);
-                        if (ps.executeUpdate() > 0) {
-                            System.out.println("Imagen actualizada.");
-                        } else {
-                            System.out.println("No se actualizó la imagen.");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Error al actualizar imagen: " + e.getMessage());
-                    }
-                    break;
-                default:
-                    System.out.println("Opción no válida.");
-                    break;
-            }
-        } while (opcion != 0);
 
-    } catch (SQLException e) {
-        System.out.println("Error en la base de datos: " + e.getMessage());
-    }
-}
  public void EliminarProd() {
     Connection con = null;
     PreparedStatement ps = null;
@@ -305,7 +385,7 @@ public void ActualizarProd() {
             int Id_categoria = rs.getInt("Id_categoria");
             LocalDate fechaCreacion = rs.getDate("FechaCreacion").toLocalDate();
             
-           System.out.println("ID: " + id_producto +"\n"+ ", Nombre: " +  nombre +"\n"+", Descripcion: "+ descripcion +"\n"+ " Precio:"+ precio + " Stock:"+ Stock+"\n"+"Id_categoria: "+Id_categoria+", Imagen: "+imagen+"Fecha Creacion:"+ fechaCreacion+"\n");
+        System.out.println("ID: " + id_producto + "\n" + "Nombre: " + nombre + "\n" + "Descripcion: " + descripcion + "\n" + "Precio: " + precio + "\n" + "Stock: " + Stock + "\n" + "Id_categoria: " + Id_categoria + "\n" + "Imagen: " + imagen + "\n" + "Fecha Creacion: " + fechaCreacion + "\n");
             productosDescontinuados.add(id_producto);
             hayProductosDescontinuados = true;
         }
@@ -331,9 +411,9 @@ public void ActualizarProd() {
         }
         
         // Confirmar la eliminación
-        System.out.println("¿Estas seguro de que deseas eliminar el producto con ID " + idProductoEliminar + "? (Si/No)");
+        System.out.println("¿Estás seguro de que deseas eliminar el producto con ID " + idProductoEliminar + "? (Si/No)");
         sc.nextLine();  // Limpiar buffer
-        String confirmacion = sc.nextLine();
+        String confirmacion = sc.nextLine().trim();
         
         if (confirmacion.equalsIgnoreCase("Si")) {
             // Eliminar el producto de la base de datos
@@ -343,12 +423,12 @@ public void ActualizarProd() {
             int rowsAffected = deleteStmt.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("Producto eliminado correctamente.");
+                System.out.println("Producto con ID " + idProductoEliminar + " eliminado correctamente.");
             } else {
-                System.out.println("Error al eliminar el producto.");
+                System.out.println("Error al eliminar el producto con ID " + idProductoEliminar + ".");
             }
         } else {
-            System.out.println("Eliminacio cancelada.");
+            System.out.println("Eliminación cancelada.");
         }
         
     } catch (SQLException e) {
@@ -365,131 +445,188 @@ public void ActualizarProd() {
 }
 
 
-    /*public void ExportarInfo()throws Exception{
-        //Hacer la conexion con la BBDD 
-            //Query de todos los productos
-        String consultaPrueba = "SELECT * FROM productos";
-        
-
-        try {
-            FileWriter file = new FileWriter("/AplicacionJava/src/productos.json");
-            Connection con = DriverManager.getConnection(Url, User, Pass);
-            PreparedStatement myStmt = con.prepareStatement(consultaPrueba);
-            ResultSet rs = myStmt.executeQuery();
-            String product="{\n\"products\":[";
-            while (rs.next()) {
-                 product += "{\"id\":\"" + rs.getString("ID") + "\",\n"
-                    + "\"title\":\"" + rs.getString("Nombre") + "\",\n"
-                    + "\"price\":" + rs.getDouble("Precio") + ",\n"
-                    + "\"description\":\"" + rs.getString("Descripcion") + "\",\n"
-                    + "\"category\":\"" + rs.getInt("ID_Categoria") + "\",\n"
-                    + "\"image\":\"" + rs.getString("img") + "\"\n"
-                    + "\n},\n";
-            }
-            product = product.substring(0, product.length() - 2);// Quitamos la ultima coma para que no salte ningun error en la lectura del JSON
-            product += "]}";
-            file.write(product);
-            file.close();
-            rs.close();
-            myStmt.close();
-            con.close();*/
-
-
-
-            /*
-TOTAL GANANCIAS:
-SELECT SUM(PrecioTotal) as TotalGanancias FROM pedidos ;
-
-Productos con stock bajo:
-SELECT Nombre as Productos_BajoStock FROM productos WHERE Stock<5;
-Clientes con mas pedidos:
-SELECT u.id_user, u.nombre, COUNT(p.id_pedido) AS total_pedidos
-FROM usuario u
-JOIN pedidos p ON u.id_user = p.id_user
-GROUP BY u.id_user, u.nombre
-ORDER BY total_pedidos DESC
-LIMIT 10;
-
-ganancias por mes:
-SELECT MONTH(FechaPedido)as mes,SUM(PrecioTotal)as ganancias 
-FROM pedidos GROUP BY mes ORDER BY mes ASC ;
-
-productos nunca comprados:
-SELECT p.id_producto as PRODUCTO_ID, p.nombre as PRODUCTOS_MENOS_COMPRADOS 
-FROM productos p LEFT JOIN detalle_pedido dp ON p.id_producto = dp.id_producto 
-WHERE dp.id_producto IS NULL;
-
-Productos que han generado más de 500€ de ganancia:
-SELECT p.id_producto,
- p.nombre,
- SUM(dp.Cantidad * dp.Precio) AS ganancia
- FROM productos p
- JOIN detalle_pedido dp ON p.id_producto = dp.id_producto
- GROUP BY p.id_producto, p.nombre
- HAVING ganancia > 500
- ORDER BY ganancia DESC;
-
-*/
-            /*String estadisticas = "{\n"; // Extraemos todas la estidisticas para escribirlas en el JSON
-            estadisticas += totalGanancias()
-                    + "\n" + stockBajo()
-                    + "\n" + clientMasPed()
-                    + "\n" + gananciasPorMes()
-                    + "\n" + productosNuncaCompr()
-                    + "\n" + gananciasMasDeQuinientos() + "\n}";
-        
-        File est = new File("..\\..\\..\\..\\..\\Apache24\\htdocs\\estadisticas.json");// Ingresamos las estidisticas en su archivo correspondiente
-        FileWriter jsonEst = new FileWriter(est);
-        jsonEst.write(estadisticas);
-        jsonEst.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }*/
-        
-        //Transformarlo en fichero JSON
-    /*
-
-   
-     
-        String consultaPrueba = "SELECT * FROM productos";
-       
-        
-        try {
-            Connection con = DriverManager.getConnection(Url, User, Pass);
-            PreparedStatement myStmt = con.prepareStatement(consultaPrueba);
-            ResultSet rs = myStmt.executeQuery();
+ // Método para exportar los productos a un archivo JSON
+ public void exportarProductosAJson() {
+    List<Producto> listaProductos = new ArrayList<>();
+    String query = "SELECT * FROM productos";
+    
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        try (Connection con = DriverManager.getConnection(Url, User, Pass);
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
             
             while (rs.next()) {
-                
+                Timestamp ts = rs.getTimestamp("fechaCreacion");
+                LocalDate fecha = ts != null ? ts.toLocalDateTime().toLocalDate():LocalDate.now();
+                Producto prod = new Producto(
+                    rs.getString("Nombre"),
+                    rs.getString("Descripcion"),
+                    rs.getDouble("Precio"),
+                    rs.getInt("Stock"),
+                    rs.getInt("id_producto"),       // Asegúrate de que el nombre de la columna sea correcto
+                    rs.getInt("Id_categoria"),
+                    rs.getString("Imagen"),
+                    rs.getString("Descontinuado"),
+                    fecha
+                );
+                listaProductos.add(prod);
             }
-            
-            // Exportar la información a un archivo JSON
-            try (FileWriter file = new FileWriter("productos.json")) {
-                file.write(productosArray.toString(4)); // Convertir el array JSON a string y escribirlo en el archivo
-                System.out.println("La información ha sido exportada a productos.json");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        ExportarInfo();
+        
+        // Convertir la lista de productos a JSON utilizando Gson
+        //Gson es una libreria de google para facilitar la conversion de objetos java a JSON
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(listaProductos);
+        // Escribir el JSON en un archivo
+        try (FileWriter writer = new FileWriter("productos.json")) {
+            writer.write(json);
+            System.out.println("Productos exportados a productos.json");
+        } catch (IOException e) {
+            System.out.println("Error al escribir el archivo JSON: " + e.getMessage());
+        }
+    } catch (ClassNotFoundException | SQLException e) {
+        System.out.println("Error en la conexión o consulta: " + e.getMessage());
     }
 }
+public void exportarProductosConAltaGananciaAJson() {
+        String query = "SELECT p.id_producto, p.nombre, p.descripcion, p.precio, p.Stock, p.imagen, p.Id_categoria, p.fechaCreacion, p.descontinuado, SUM(dp.Cantidad * dp.Precio) AS ganancia " +
+                       "FROM productos p " +
+                       "JOIN detalle_pedido dp ON p.id_producto = dp.id_producto " +
+                       "GROUP BY p.id_producto, p.nombre " +
+                       "HAVING ganancia > 500 " +
+                       "ORDER BY ganancia DESC";
+
+        try (Connection con = obtenerConexion();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            List<Producto> listaProductos = new ArrayList<>();
+
+            while (rs.next()) {
+                Producto producto = new Producto(
+                    rs.getString("nombre"),
+                    rs.getString("descripcion"),
+                    rs.getDouble("precio"),
+                    rs.getInt("Stock"),
+                    rs.getInt("id_producto"),
+                    rs.getInt("Id_categoria"),
+                    rs.getString("imagen"),
+                    rs.getString("descontinuado"),
+                    rs.getTimestamp("fechaCreacion").toLocalDateTime().toLocalDate()
+                );
+                listaProductos.add(producto);
+            }
+
+            Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Timestamp.class, new JsonSerializer<Timestamp>() {
+                    @Override
+                    public JsonElement serialize(Timestamp src, Type typeOfSrc, JsonSerializationContext context) {
+                        return new JsonPrimitive(src.toInstant().toString());
+                    }
+                })
+                .setPrettyPrinting()
+                .create();
+
+            String json = gson.toJson(listaProductos);
+
+            try (FileWriter writer = new FileWriter("productos_ganancia.json")) {
+                writer.write(json);
+                System.out.println("Productos exportados a productos_ganancia.json");
+            } catch (IOException e) {
+                System.out.println("Error al escribir el archivo JSON: " + e.getMessage());
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error en la conexión o consulta: " + e.getMessage());
+        }
+    }
+
+    private Connection obtenerConexion() throws SQLException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Error al cargar el driver de MySQL: " + e.getMessage());
+        }
+        return DriverManager.getConnection(Url, User, Pass);
+    }
 
 
- */
-        //Query de estadisticas
-    
-        //Query de productos mas vendidos
-        
-    
+    // Método para obtener el total de ganancias
+    public void exportarTotalGananciasAJson() {
+        String query = "SELECT SUM(PrecioTotal) as TotalGanancias FROM pedidos";
+        ejecutarConsultaYExportarAJson(query, "total_ganancias.json");
+    }
 
+    // Método para obtener productos con stock bajo
+    public void exportarProductosBajoStockAJson() {
+        String query = "SELECT Nombre as Productos_BajoStock FROM productos WHERE Stock < 5";
+        ejecutarConsultaYExportarAJson(query, "productos_bajo_stock.json");
+    }
+
+    // Método para obtener clientes con más pedidos
+    public void exportarClientesConMasPedidosAJson() {
+        String query = "SELECT u.id_user, u.nombre, COUNT(p.id_pedido) AS total_pedidos " +
+                       "FROM usuario u " +
+                       "JOIN pedidos p ON u.id_user = p.id_user " +
+                       "GROUP BY u.id_user, u.nombre " +
+                       "ORDER BY total_pedidos DESC " +
+                       "LIMIT 10";
+        ejecutarConsultaYExportarAJson(query, "clientes_con_mas_pedidos.json");
+    }
+
+    // Método para obtener ganancias por mes
+    public void exportarGananciasPorMesAJson() {
+        String query = "SELECT MONTH(FechaPedido) as mes, SUM(PrecioTotal) as ganancias " +
+                       "FROM pedidos " +
+                       "GROUP BY mes " +
+                       "ORDER BY mes ASC";
+        ejecutarConsultaYExportarAJson(query, "ganancias_por_mes.json");
+    }
+
+    // Método para obtener productos nunca comprados
+    public void exportarProductosNuncaCompradosAJson() {
+        String query = "SELECT p.id_producto as PRODUCTO_ID, p.nombre as PRODUCTOS_MENOS_COMPRADOS " +
+                       "FROM productos p " +
+                       "LEFT JOIN detalle_pedido dp ON p.id_producto = dp.id_producto " +
+                       "WHERE dp.id_producto IS NULL";
+        ejecutarConsultaYExportarAJson(query, "productos_nunca_comprados.json");
+    }
+
+    // Método genérico para ejecutar una consulta y exportar el resultado a JSON
+    private void ejecutarConsultaYExportarAJson(String query, String nombreArchivo) {
+        List<Object> resultados = new ArrayList<>();
+        try (Connection con = DriverManager.getConnection(Url, User, Pass);
+             PreparedStatement ps = con.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (rs.next()) {
+                // Crear un mapa para almacenar los datos de cada fila
+                Map<String, Object> fila = new HashMap<>();
+                for (int i = 1; i <= columnCount; i++) {
+                    fila.put(metaData.getColumnLabel(i), rs.getObject(i));
+                }
+                resultados.add(fila);
+            }
+
+            // Convertir la lista de resultados a JSON utilizando Gson
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(resultados);
+
+            // Escribir el JSON en un archivo
+            try (FileWriter writer = new FileWriter(nombreArchivo)) {
+                writer.write(json);
+                System.out.println("Datos exportados a " + nombreArchivo);
+            } catch (IOException e) {
+                System.out.println("Error al escribir el archivo JSON: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Error en la conexión o consulta: " + e.getMessage());
+        }
+    }
 
 public void ListarProd() {
     Connection con = null;

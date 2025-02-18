@@ -11,7 +11,7 @@ public class Producto {
     private int Stock;
     private String imagen;
     private int Id_categoria;
-    private Timestamp fechaCreacion;
+    private LocalDate fechaCreacion;
     private String descontinuado;
  
     
@@ -24,7 +24,7 @@ public class Producto {
         this.Stock = Stock;
         this.imagen = imagen;
         this.Id_categoria = id_categoria; 
-        this.fechaCreacion = Timestamp.valueOf(LocalDate.now().atStartOfDay());
+       this.fechaCreacion=LocalDate.now();
         this.descontinuado = descontinuado;  
     }
 //Getters
@@ -70,7 +70,7 @@ public class Producto {
 
 
 
-    public Timestamp getFechaCreacion() {
+    public LocalDate getFechaCreacion() {
         return fechaCreacion;
     }
     public String getDescontinuado() {
@@ -111,7 +111,7 @@ public class Producto {
         this.Id_categoria = Id_categoria;
     }
     
-    public void setFechaCreacion(Timestamp fechaCreacion) {
+    public void setFechaCreacion(LocalDate fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
 

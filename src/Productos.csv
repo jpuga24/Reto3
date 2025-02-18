@@ -1,4 +1,4 @@
-ID Producto,Nombre,Descripcion,Precio,Stock Disponible,Categoria,Fecha Creacion,Descontinuado,Imagen
+ID Producto,Nombre,Descripcion,Precio,Stock Disponible,id_categoria,Fecha Creacion,Descontinuado,Imagen
 1,Pantalón Deportivo Ajustado,Pantalón ajustado de material flexible ideal para actividades de alto rendimiento.,29.99,50,Pantalones,2024-01-12,No,https://lc.cx/78PKGC
 2,Sudadera con Capucha de Algodón,Sudadera cómoda y cálida con capucha y bolsillo frontal.,39.99,40,Sudaderas,2024-01-18,No,https://lc.cx/H6Q9_6
 3,Camiseta Deportiva de Manga Corta,Camiseta ligera de secado rápido y perfecta para entrenamientos intensos.,19.99,60,Camisetas,2024-01-25,No,https://lc.cx/ySunzO

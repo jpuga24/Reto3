@@ -190,7 +190,52 @@ public class App {
                 }
                 case 5 -> { // Exportar información
                     System.out.println("Ha seleccionado la opción de exportar la información");
-                    //gestor.ExportarInfo();
+                    int OpcExport;
+                    System.out.println("Seleccione lo que desea exportar: ");
+                    System.out.println("1.Datos de Estadisticas  \n 2.Datos de todos los productos  \n 3. Datos de productod mas vendidos");
+                    OpcExport = sc.nextInt();
+                    sc.nextLine();
+                    switch (OpcExport) {
+                        case 1:
+                            System.out.println("Exportando datos de estadisticas...");
+                            System.out.println("Exportando productos con alta ganancia...");
+                            gestor.exportarProductosConAltaGananciaAJson();
+                            System.out.println("Total ganancias exportadas a JSON...");
+                            System.out.println("Exportando total ganancias");
+                            gestor.exportarTotalGananciasAJson();
+                            System.out.println("total ganancias exportadas a JSON...");
+                            System.out.println("Exportando productos con bajo stock...");
+                            gestor.exportarProductosBajoStockAJson() ;
+                            System.out.println("Productos con bajo stock exportados a JSON...");
+                            System.out.println("Exportando clientes con mas pedidos...");
+                            gestor.exportarClientesConMasPedidosAJson() ;
+                            System.out.println("Clientes con mas pedidos exportados a JSON...");
+                            System.out.println("Exportando ganancias por mes...");
+                            gestor.exportarGananciasPorMesAJson();
+                            System.out.println("Ganancias por mes exportadas a JSON...");
+                            System.out.println("Exportando productos nunca comprados...");
+                            gestor.exportarProductosNuncaCompradosAJson();
+                            System.out.println("Productos nunca comprados exportados a JSON...");
+                            System.out.println("Resumen de exportaciones completado.");
+                            break;
+                        case 2:
+                        try {
+                            System.out.println("Exportando datos de todos los productos...");
+                            gestor.exportarProductosAJson();
+                            System.out.println("Datos exportados correctamente.");
+                        } catch (Exception e) {
+                            System.err.println("Error al exportar los datos.");
+                        }
+                            break;
+                        case 3:
+                            System.out.println("Exportando datos de los productos más vendidos...");
+                          gestor.exportarProductosConAltaGananciaAJson();
+                            System.out.println("Datos exportados correctamente.");
+                            break;
+                    
+                        default:
+                            break;
+                    }
                     break;
                 }
                 case 6 -> { // Listar productos
