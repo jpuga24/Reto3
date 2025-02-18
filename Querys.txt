@@ -30,12 +30,16 @@ SELECT p.id_producto as PRODUCTO_ID, p.nombre as PRODUCTOS_MENOS_COMPRADOS FROM 
 Productos que han generado más de 500€ de ganancia:
 
 SELECT p.id_producto,
- ->p.nombre,
- ->SUM(dp.Cantidad * dp.Precio) AS ganancia
- -> FROM productos p
- -> JOIN detalle_pedido dp ON p.id_producto = dp.id_producto
- -> GROUP BY p.id_producto, p.nombre
- -> HAVING ganancia > 500
- -> ORDER BY ganancia DESC;
+       p.nombre,
+       SUM(dp.Cantidad * dp.Precio) AS ganancia
+FROM productos p
+JOIN detalle_pedido dp ON p.id_producto = dp.id_producto
+GROUP BY p.id_producto, p.nombre
+HAVING ganancia > 500
+ORDER BY ganancia DESC;
+
+
+
+
 
 
