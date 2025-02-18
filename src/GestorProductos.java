@@ -2,7 +2,6 @@ import java.io.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
-import java.io.IOException;
 
 
 
@@ -24,26 +23,30 @@ public class GestorProductos {
         // Definimos la query para insertar un producto
         String queryAgg = "INSERT INTO productos (Nombre, Descripcion, Precio, Stock, Id_categoria, Descontinuado, Imagen) VALUES (?, ?, ?, ?, ?, ?, ?)";
     
-        try (Connection con = DriverManager.getConnection(Url, User, Pass);
-            PreparedStatement ps = con.prepareStatement(queryAgg)) {
-    
-            ps.setString(1, producto.getNombre());
-            ps.setString(2, producto.getDescripcion());
-            ps.setInt(3, (int) producto.getPrecio()); // Convertir a int
-            ps.setInt(4, producto.getStock());
-            ps.setInt(5, producto.getId_categoria()); // Asumimos que id_categoria es válido
-            ps.setString(6, producto.getDescontinuado()); // "Sí" o "No"
-            ps.setString(7, producto.getImagen());
-    
-            int resultado = ps.executeUpdate();
-    
-            if (resultado > 0) {
-                System.out.println("Producto añadido a la base de datos correctamente: " + producto.getNombre());
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            try (Connection con = DriverManager.getConnection(Url, User, Pass);
+                         PreparedStatement ps = con.prepareStatement(queryAgg)) {
+                        ps.setString(1, producto.getNombre());
+                        ps.setString(2, producto.getDescripcion());
+                        ps.setInt(3, (int) producto.getPrecio()); // Convertir a int
+                        ps.setInt(4, producto.getStock());
+                        ps.setInt(5, producto.getId_categoria()); // Asumimos que id_categoria es válido
+                        ps.setString(6, producto.getDescontinuado()); // "Sí" o "No"
+                        ps.setString(7, producto.getImagen());
+        
+                        int resultado = ps.executeUpdate();
+        
+                        if (resultado > 0) {
+                            System.out.println("Producto añadido a la base de datos correctamente: " + producto.getNombre());
+                        }
+                    } catch (SQLException e) {
+                        System.out.println("Error al insertar producto: " + e.getMessage());
+                    }
+                } catch (ClassNotFoundException e) {
+                    System.out.println("Error al cargar el driver de la base de datos: " + e.getMessage());
+                }
             }
-        } catch (SQLException e) {
-            System.out.println("Error al insertar producto: " + e.getMessage());
-        }
-    }
     
     // Método para verificar si la categoría existe
     private boolean categoriaExiste(int Id_categoria) {
@@ -366,27 +369,79 @@ public void ActualizarProd() {
         //Hacer la conexion con la BBDD 
             //Query de todos los productos
         String consultaPrueba = "SELECT * FROM productos";
-
+        
 
         try {
             FileWriter file = new FileWriter("/AplicacionJava/src/productos.json");
-            Connection con = null;
-            con = DriverManager.getConnection(Url, User, Pass);
+            Connection con = DriverManager.getConnection(Url, User, Pass);
             PreparedStatement myStmt = con.prepareStatement(consultaPrueba);
             ResultSet rs = myStmt.executeQuery();
+            String product="{\n\"products\":[";
             while (rs.next()) {
-                int id_producto = rs.getInt("id_producto"); 
-                String Nombre = rs.getString("Nombre");
-                String Descripcion= rs.getString("Descripcion");
-                float Precio= rs.getFloat("Precio");
-                int Stock= rs.getInt("Stock");
-                String FechaCreacion= rs.getString("FechaCreacion");
-                int Id_categoria= rs.getInt("id_categoria");
-                String ImagenUrl= rs.getString("Imagen");
-                
-               // file.write();
-                System.out.println();
+                 product += "{\"id\":\"" + rs.getString("ID") + "\",\n"
+                    + "\"title\":\"" + rs.getString("Nombre") + "\",\n"
+                    + "\"price\":" + rs.getDouble("Precio") + ",\n"
+                    + "\"description\":\"" + rs.getString("Descripcion") + "\",\n"
+                    + "\"category\":\"" + rs.getInt("ID_Categoria") + "\",\n"
+                    + "\"image\":\"" + rs.getString("img") + "\"\n"
+                    + "\n},\n";
             }
+            product = product.substring(0, product.length() - 2);// Quitamos la ultima coma para que no salte ningun error en la lectura del JSON
+            product += "]}";
+            file.write(product);
+            file.close();
+            rs.close();
+            myStmt.close();
+            con.close();
+
+
+
+            /*
+TOTAL GANANCIAS:
+SELECT SUM(PrecioTotal) as TotalGanancias FROM pedidos ;
+
+Productos con stock bajo:
+SELECT Nombre as Productos_BajoStock FROM productos WHERE Stock<5;
+Clientes con mas pedidos:
+SELECT u.id_user, u.nombre, COUNT(p.id_pedido) AS total_pedidos
+FROM usuario u
+JOIN pedidos p ON u.id_user = p.id_user
+GROUP BY u.id_user, u.nombre
+ORDER BY total_pedidos DESC
+LIMIT 10;
+
+ganancias por mes:
+SELECT MONTH(FechaPedido)as mes,SUM(PrecioTotal)as ganancias 
+FROM pedidos GROUP BY mes ORDER BY mes ASC ;
+
+productos nunca comprados:
+SELECT p.id_producto as PRODUCTO_ID, p.nombre as PRODUCTOS_MENOS_COMPRADOS 
+FROM productos p LEFT JOIN detalle_pedido dp ON p.id_producto = dp.id_producto 
+WHERE dp.id_producto IS NULL;
+
+Productos que han generado más de 500€ de ganancia:
+SELECT p.id_producto,
+ p.nombre,
+ SUM(dp.Cantidad * dp.Precio) AS ganancia
+ FROM productos p
+ JOIN detalle_pedido dp ON p.id_producto = dp.id_producto
+ GROUP BY p.id_producto, p.nombre
+ HAVING ganancia > 500
+ ORDER BY ganancia DESC;
+
+*/
+            String estadisticas = "{\n"; // Extraemos todas la estidisticas para escribirlas en el JSON
+            estadisticas += totalGanancias()
+                    + "\n" + stockBajo()
+                    + "\n" + clientMasPed()
+                    + "\n" + gananciasPorMes()
+                    + "\n" + productosNuncaCompr()
+                    + "\n" + gananciasMasDeQuinientos() + "\n}";
+        
+        File est = new File("..\\..\\..\\..\\..\\Apache24\\htdocs\\estadisticas.json");// Ingresamos las estidisticas en su archivo correspondiente
+        FileWriter jsonEst = new FileWriter(est);
+        jsonEst.write(estadisticas);
+        jsonEst.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -532,6 +587,8 @@ public void ListarProd() {
 public void BusquedaProd(String nombre, String descripcion, Scanner sc) {
     Connection con = null;
     PreparedStatement ps = null;
+    ResultSet rs=null;
+    
     try {
         // Establecer la conexión a la base de datos
         con = DriverManager.getConnection(Url, User, Pass);
@@ -546,7 +603,7 @@ public void BusquedaProd(String nombre, String descripcion, Scanner sc) {
         ps.setString(1, "%" + Buscarprod + "%");
         ps.setString(2, "%" + Buscarprod + "%");
         
-        ResultSet rs = ps.executeQuery();
+        rs = ps.executeQuery();
 
         boolean encontrado = false;
         
@@ -573,6 +630,7 @@ public void BusquedaProd(String nombre, String descripcion, Scanner sc) {
     } finally {
         // Cerrar recursos
         try {
+            if(rs != null) rs.close();
             if (ps != null) ps.close();
             if (con != null) con.close();
         } catch (SQLException e) {

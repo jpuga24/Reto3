@@ -18,8 +18,6 @@ public class App {
         System.out.println("7. Buscar productos");
         System.out.print("Seleccione la opción deseada: ");
         }
-            
-        
 
 
     // Método de validación de login
