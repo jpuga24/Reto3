@@ -23,7 +23,7 @@ public class GestorProductosTest {
         stmt.execute("INSERT INTO categorias (id_categoria, nombre) VALUES (1, 'Electrónica')");
         
         // Crear una instancia del servicio
-       GestorProductose = newGestorProductose(connection); // Suponiendo que tu clase ProductoService recibe la conexión
+       GestorProductos = newGestorProductos(connection); // Suponiendo que tu clase ProductoService recibe la conexión
     }
 
     @After

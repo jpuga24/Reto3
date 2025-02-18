@@ -365,7 +365,7 @@ public void ActualizarProd() {
 }
 
 
-    public void ExportarInfo()throws Exception{
+    /*public void ExportarInfo()throws Exception{
         //Hacer la conexion con la BBDD 
             //Query de todos los productos
         String consultaPrueba = "SELECT * FROM productos";
@@ -392,7 +392,7 @@ public void ActualizarProd() {
             file.close();
             rs.close();
             myStmt.close();
-            con.close();
+            con.close();*/
 
 
 
@@ -430,7 +430,7 @@ SELECT p.id_producto,
  ORDER BY ganancia DESC;
 
 */
-            String estadisticas = "{\n"; // Extraemos todas la estidisticas para escribirlas en el JSON
+            /*String estadisticas = "{\n"; // Extraemos todas la estidisticas para escribirlas en el JSON
             estadisticas += totalGanancias()
                     + "\n" + stockBajo()
                     + "\n" + clientMasPed()
@@ -445,7 +445,7 @@ SELECT p.id_producto,
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    }*/
         
         //Transformarlo en fichero JSON
     /*
@@ -507,13 +507,20 @@ public void ListarProd() {
         int opcionCategoria = sc.nextInt();
         sc.nextLine(); // Limpiar el buffer
 
-        String categoriaSeleccionada = "";
+        int categoriaSeleccionada = -1;
         String query = "";
         
         if (opcionCategoria == 2) {
             // Mostrar las categorías disponibles
-            System.out.println("Introduce la categoría (Pantalones, Camisetas, Chaquetas, Camisas, Sudaderas):");
-            categoriaSeleccionada = sc.nextLine();
+            System.out.println("Seleccione la categoría del producto:");
+            System.out.println("1 | Pantalones");
+            System.out.println("2 | Sudaderas");
+            System.out.println("3 | Camisetas");
+            System.out.println("4 | Camisas");
+            System.out.println("5 | Chaquetas");
+            System.out.println("Selecciona un numero: ");
+            
+            categoriaSeleccionada = sc.nextInt();
             query = "SELECT * FROM productos WHERE id_categoria = ?";
         } else {
             // Si elige todos los productos
@@ -522,7 +529,7 @@ public void ListarProd() {
 
         ps = con.prepareStatement(query);
         if (opcionCategoria == 2) {
-            ps.setString(1, categoriaSeleccionada);
+            ps.setInt(1, categoriaSeleccionada);
         }
         
         rs = ps.executeQuery();
@@ -546,7 +553,7 @@ public void ListarProd() {
             if (opcionCategoria == 2) {
                 query = "SELECT * FROM productos WHERE id_categoria = ? " + orden;
                 ps = con.prepareStatement(query);
-                ps.setString(1, categoriaSeleccionada);
+                ps.setInt(1, categoriaSeleccionada);
             } else {
                 query = "SELECT * FROM productos " + orden;
                 ps = con.prepareStatement(query);
@@ -584,7 +591,7 @@ public void ListarProd() {
 }
 
     
-public void BusquedaProd(String nombre, String descripcion, Scanner sc) {
+public void BusquedaProd() {
     Connection con = null;
     PreparedStatement ps = null;
     ResultSet rs=null;

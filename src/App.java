@@ -190,7 +190,7 @@ public class App {
                 }
                 case 5 -> { // Exportar información
                     System.out.println("Ha seleccionado la opción de exportar la información");
-                    gestor.ExportarInfo();
+                    //gestor.ExportarInfo();
                     break;
                 }
                 case 6 -> { // Listar productos
@@ -200,7 +200,7 @@ public class App {
                 }
                 case 7 -> { // Buscar productos
                     System.out.println("Ha seleccionado la opción de buscar productos");
-                    gestor.BusquedaProd(null, null, null); 
+                    gestor.BusquedaProd(); 
                     break;
                 }
                 default -> System.out.println("Opción no válida. Por favor ingresa una opción válida.");
