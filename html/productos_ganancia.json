@@ -1,0 +1,35 @@
+[
+    {
+      "nombre": "Sudadera con capucha",
+      "descripcion": "Sudadera negra con bolsillo delantero",
+      "id_producto": 6,
+      "precio": 30.0,
+      "Stock": 0,
+      "imagen": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Sudadera_urban.jpg",
+      "Id_categoria": 2,
+      "fechaCreacion": "2025-02-19",
+      "descontinuado": "SI"
+    },
+    {
+      "nombre": "Pantalón vaquero",
+      "descripcion": "Pantalón de mezclilla azul",
+      "id_producto": 1,
+      "precio": 40.0,
+      "Stock": 0,
+      "imagen": "https://upload.wikimedia.org/wikipedia/commons/9/92/Denimjeans2.JPG",
+      "Id_categoria": 1,
+      "fechaCreacion": "2025-02-19",
+      "descontinuado": "SI"
+    },
+    {
+      "nombre": "Pantalón de lino",
+      "descripcion": "Pantalón ligero para el verano",
+      "id_producto": 5,
+      "precio": 40.0,
+      "Stock": 1,
+      "imagen": "https://upload.wikimedia.org/wikipedia/commons/8/82/Trousers_MET_1978.88.12_F.jpg",
+      "Id_categoria": 1,
+      "fechaCreacion": "2025-02-19",
+      "descontinuado": "NO"
+    }
+  ]

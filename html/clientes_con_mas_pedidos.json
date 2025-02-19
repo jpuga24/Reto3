@@ -1,0 +1,52 @@
+[
+    {
+      "id_user": 1,
+      "nombre": "ikerb",
+      "total_pedidos": 6
+    },
+    {
+      "id_user": 3,
+      "nombre": "gorkaa",
+      "total_pedidos": 3
+    },
+    {
+      "id_user": 5,
+      "nombre": "unaiog",
+      "total_pedidos": 3
+    },
+    {
+      "id_user": 7,
+      "nombre": "anderu",
+      "total_pedidos": 3
+    },
+    {
+      "id_user": 8,
+      "nombre": "itziah",
+      "total_pedidos": 3
+    },
+    {
+      "id_user": 9,
+      "nombre": "jonpa",
+      "total_pedidos": 3
+    },
+    {
+      "id_user": 10,
+      "nombre": "nereai",
+      "total_pedidos": 3
+    },
+    {
+      "id_user": 2,
+      "nombre": "aintza",
+      "total_pedidos": 2
+    },
+    {
+      "id_user": 4,
+      "nombre": "maialenl",
+      "total_pedidos": 2
+    },
+    {
+      "id_user": 6,
+      "nombre": "aneet",
+      "total_pedidos": 2
+    }
+  ]

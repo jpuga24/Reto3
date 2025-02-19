@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UsurbilTex-Estadisticas</title>
+    
+    <!-- Enlace a hoja de estilos -->
+    <link rel="stylesheet" href="/css/estadisticas.css">
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/imgs/LogoSoloSinFondo.png" type="image/x-icon">
+    
+    <!-- Script principal -->
+    <script src="/scripts/estadisticas.js" defer></script>
+</head>
+<body>
+    <header>
+        <!-- Logo con enlace a la pagina principal -->
+        <a href="index.html"> <img src="/imgs/LogoSoloSinFondo.png" id="LogoNav"></a>
+        
+        <!-- Barra de navegacion -->
+        <nav class="Navegador">
+            <ul>
+                <li><a href="carrito.html"><img src="/imgs/CestaIcono.png" alt="Icono Cesta"></a></li>
+                <li><img src="/imgs/BuscadorIcono.png" alt="Icono Buscador"></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <!-- Contenedor de estadisticas -->
+        <div class="estadisticas-container">
+            
+            <!-- Mensaje de bienvenida -->
+            <div class="titulo">Bienvenido</div>
+
+            <!-- Informacion del administrador -->
+            <div class="admin-info">
+                <img src="/imgs/Usuarioicono.png" alt="Admin">
+                <div>
+                    JIM<br>
+                    <strong>Admin</strong><br>
+                    El Admin
+                </div>
+            </div>
+
+            <!-- Seccion de ventas y ganancias -->
+            <div class="seccion" id="ventasSection">
+                <strong>Ventas del año/ganancias mensuales:</strong>
+                <script src="ganancias_por_mes.json"></script>
+            </div>
+
+            <!-- Seccion de productos con stock bajo -->
+            <div class="seccion">
+                <strong>Productos stock bajo:</strong>
+                <script src="estadisticas.js"></script>
+            </div>
+
+            <!-- Clientes con mas pedidos -->
+            <div class="seccion" id="clientesTopSection">
+                <strong>Clientes con más pedidos:</strong>
+                <button id="verListado">Ver listado</button>
+                <div id="listaClientes">
+                    <!-- Aquí se insertará la lista de clientes -->
+                </div>
+            </div>
+
+            <!-- Productos nunca comprados -->
+            <div class="seccion">
+                <strong>Productos nunca comprados:</strong>
+                <script src="estadisticas.js"></script>
+            </div>
+
+            <!-- Productos con más ganancias -->
+            <div class="seccion">
+                <strong>Productos con más ganancias:</strong>
+                <img src="/imgs/ChaquetNike.png" alt="Chaqueta">
+            </div>
+
+      
+
+          
+           
+        </div>
+    </main>
+    
+    <aside>
+        <!-- Seccion lateral -->
+    </aside>
+
+    <footer>
+        <!-- Pie de pagina -->
+    </footer>
+</body>
+</html>

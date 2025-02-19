@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"> <!-- Configuracion de caracteres -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Diseño responsive -->
+    <title>UsurbilTex-Carrito</title> <!-- Titulo de la pagina -->
+    
+    <link rel="stylesheet" href="/css/carrito.css"> <!-- Enlace a estilos CSS -->
+    <link rel="shortcut icon" href="/imgs/LogoSoloSinFondo.png" type="image/x-icon"> <!-- Icono de la pagina -->
+    
+    <!-- Fuente de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="Navegador"> <!-- Barra de navegacion -->
+            <a href="index.html"><img src="/imgs/LogoSoloSinFondo.png" id="LogoNav"></a> <!-- Logo -->
+            <ul>
+                <li> <a href="estadisticas.html"> <img src="/imgs/Usuarioicono.png" alt="">  </a> </li> <!-- Icono usuario -->
+                <li><img src="/imgs/BuscadorIcono.png" alt=""></li> <!-- Icono buscador -->
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="carrito-container" id="carrito-container"> <!-- Contenedor del carrito -->
+            <div class="titulo-carrito">Carrito</div> <!-- Titulo -->
+            <div id="productos-lista"></div> <!-- Lista de productos -->
+            <div class="total" id="total">Total: 0.00€</div> <!-- Total de la compra -->
+            <div class="boton-pago" onclick="GraciasCompra()">Pasar por caja</div> <!-- Boton de pago -->
+            <script src="/scripts/carrito.js" defer></script> <!-- Script de funcionalidad -->
+        </div>
+    </main>
+
+    <aside>
+    </aside>
+
+    <footer>
+        <div class="envio-gratis" id="envio-gratis">ENVIO GRATIS A PARTIR DE 40€</div> <!-- Mensaje promocional -->
+    </footer>
+</body>
+</html>
