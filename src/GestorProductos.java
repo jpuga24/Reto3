@@ -85,12 +85,12 @@ public class GestorProductos {
     public void FicheroCSV() throws IOException {
         System.out.println("Cargando fichero...");
     
-        // Ruta absoluta del archivo CSV
-        String rutaArchivo = "C:\\Users\\Miguel Campo\\Desktop\\Usurbiltex\\AplicacionJava\\src\\Productos.csv";
+        // Ruta relativa del archivo CSV
+        String rutaArchivo = "AplicacionJava\\src\\Productos.csv"; //Relativa para prevenir errores de ruta
     
         // Verificar si el archivo existe
         File archivo = new File(rutaArchivo);
-        if (!archivo.exists()) {
+        if (!archivo.exists()) { // Si el archivo no existe o la ruta es incorrecta
             System.out.println("El archivo no existe en la ruta especificada: " + rutaArchivo);
             return;
         }
@@ -105,16 +105,16 @@ public class GestorProductos {
                 System.out.println("El archivo está vacío.");
                 return;
             }
-    
-            while ((linea = ProdCsv.readLine()) != null) {
-                if (linea.isEmpty()) continue; // Saltar línea vacía
+            
+            while ((linea = ProdCsv.readLine()) != null) { // Leer cada línea del archivo mientras no haya llegado al final
+                if (linea.isEmpty()) continue; // Saltar línea si está vacía
     
                 // Separar los valores por comas
                 String[] Csvtemp = linea.split(",");
     
                 // Verificar que la línea tenga el número esperado de columnas
                 if (Csvtemp.length == 9) {
-                    try {
+                    try { //Separamos los valores de la linea y los convertimos a los tipos de datos correspondientes
                         int id_producto = Integer.parseInt(Csvtemp[0].trim());
                         String nombre = Csvtemp[1].trim();
                         String descripcion = Csvtemp[2].trim();
@@ -124,7 +124,7 @@ public class GestorProductos {
                         // Convertir el nombre de la categoría a un id numérico
                         String categoriaStr = Csvtemp[5].trim();
                         int id_categoria;
-                        switch (categoriaStr.toLowerCase()) {
+                        switch (categoriaStr.toLowerCase()) { //Al igual que con la BBDD convertimos el nombre de la categoría a un id numérico
                             case "pantalones":
                                 id_categoria = 1;
                                 break;
@@ -145,7 +145,7 @@ public class GestorProductos {
                                 continue; // O asignar un valor por defecto
                         }
                         
-                        LocalDate fechaCreacion = LocalDate.parse(Csvtemp[6].trim());
+                        LocalDate fechaCreacion = LocalDate.parse(Csvtemp[6].trim()); // Convertir la fecha a LocalDate
                         String descontinuado = Csvtemp[7].trim();
                         String imagen = Csvtemp[8].trim();
     
@@ -153,14 +153,14 @@ public class GestorProductos {
                         Producto producto = new Producto(nombre, descripcion, precio, Stock, id_producto, id_categoria, imagen, descontinuado, fechaCreacion);
                         productos.add(producto);
                     } catch (NumberFormatException e) {
-                        System.out.println("Error al procesar la línea: " + linea);
+                        System.out.println("Error al procesar la línea: " + linea); //Mensaje de error si hay un error al procesar la linea
                         e.printStackTrace(); // Para obtener más detalles del error
                     } catch (DateTimeParseException e) {
-                        System.out.println("Error al parsear la fecha en la línea: " + linea);
-                        e.printStackTrace();
+                        System.out.println("Error al cambiar el formato de la fecha en la línea: " + linea); //Mensaje de error si hay un error al cambiar el formato de la fecha
+                        e.printStackTrace(); 
                     }
                 } else {
-                    System.out.println("Línea con formato incorrecto: " + linea);
+                    System.out.println("Línea con formato incorrecto: " + linea); //Mensaje de error si hay un error en el formato de la linea
                 }
             }
         } catch (IOException e) {
@@ -173,7 +173,7 @@ public class GestorProductos {
         // Imprimir los datos desglosados de cada producto
         System.out.println("Productos cargados:");
         for (Producto p : productos) {
-            System.out.println("------------------------------------------------");
+            System.out.println("------------------------------------------------"); //Formato de impresión
             System.out.println("ID: " + p.getId_producto());
             System.out.println("Nombre: " + p.getNombre());
             System.out.println("Descripción: " + p.getDescripcion());
@@ -187,16 +187,15 @@ public class GestorProductos {
         System.out.println("------------------------------------------------");
     }
 
-    public void ActualizarProd() {
+    public void ActualizarProd() { //Metodo para actualizar productos
         try (Connection con = DriverManager.getConnection(Url, User, Pass)) {
             // Solicitar al usuario el nombre del producto a buscar
             System.out.println("Ingrese el nombre del producto a buscar:");
             String busqueda = sc.nextLine();
-    
             // Buscar en la base de datos los productos que coincidan por nombre
             String queryActu = "SELECT * FROM productos WHERE Nombre LIKE ?";
             try (PreparedStatement ps = con.prepareStatement(queryActu)) {
-                ps.setString(1, "%" + busqueda + "%");
+                ps.setString(1, "%" + busqueda + "%"); // Buscar por nombre similar
                 try (ResultSet rs = ps.executeQuery()) {
                     if (!rs.isBeforeFirst()) { // No hay resultados
                         System.out.println("No se encontraron productos con ese nombre.");
@@ -204,8 +203,8 @@ public class GestorProductos {
                     }
                     // Mostrar productos encontrados
                     System.out.println("Productos encontrados:");
-                    while (rs.next()) {
-                        System.out.printf("ID: %d | Nombre: %s | Descripción: %s | Precio: %.2f | Stock: %d | Categoría: %d | Imagen: %s%n",
+                    while (rs.next()) { // Mientras haya productos con ese nombre
+                        System.out.printf("ID: %d | Nombre: %s | Descripción: %s | Precio: %.2f | Stock: %d | Categoría: %d | Imagen: %s%n", //Formato de impresión
                                 rs.getInt("id_producto"),
                                 rs.getString("Nombre"),
                                 rs.getString("Descripcion"),
@@ -220,7 +219,7 @@ public class GestorProductos {
             // Solicitar al usuario el ID del producto a actualizar
             System.out.println("\nIntroduce el ID del producto a actualizar:");
             int id = sc.nextInt();
-            sc.nextLine(); // Limpiar el buffer
+            sc.nextLine(); // Salto de linea
     
             // Menú para actualizar los campos
             int opcion;
@@ -237,15 +236,15 @@ public class GestorProductos {
     
                 try {
                     opcion = sc.nextInt();
-                } catch (InputMismatchException e) {
+                } catch (InputMismatchException e) { // Comprobar si el valor introducido no es un número
                     System.out.println("Entrada inválida.");
-                    sc.nextLine(); // Limpiar buffer
+                    sc.nextLine(); // Salto de línea
                     opcion = -1;
                     continue;
                 }
-                sc.nextLine(); // Limpiar buffer
+                sc.nextLine(); // Salto de línea
     
-                String queryUpdate;
+                String queryUpdate; // Consulta para actualizar
                 switch (opcion) {
                     case 0:
                         System.out.println("Volviendo al menú principal.");
@@ -253,7 +252,7 @@ public class GestorProductos {
                     case 1:
                         System.out.print("Nuevo nombre: ");
                         String nuevoNombre = sc.nextLine();
-                        queryUpdate = "UPDATE productos SET Nombre = ? WHERE id_producto = ?";
+                        queryUpdate = "UPDATE productos SET Nombre = ? WHERE id_producto = ?"; //Consulta para actualizar el nombre
                         try (PreparedStatement ps = con.prepareStatement(queryUpdate)) {
                             ps.setString(1, nuevoNombre);
                             ps.setInt(2, id);
@@ -360,7 +359,7 @@ public class GestorProductos {
                             }
                         
 
-
+// Método para eliminar productos descontinuados
  public void EliminarProd() {
     Connection con = null;
     PreparedStatement ps = null;
@@ -390,20 +389,20 @@ public class GestorProductos {
             String imagen = rs.getString("Imagen");
             int Id_categoria = rs.getInt("Id_categoria");
             LocalDate fechaCreacion = rs.getDate("FechaCreacion").toLocalDate();
-            
+            // Mostrar los datos del producto
         System.out.println("ID: " + id_producto + "\n" + "Nombre: " + nombre + "\n" + "Descripcion: " + descripcion + "\n" + "Precio: " + precio + "\n" + "Stock: " + Stock + "\n" + "Id_categoria: " + Id_categoria + "\n" + "Imagen: " + imagen + "\n" + "Fecha Creacion: " + fechaCreacion + "\n");
             productosDescontinuados.add(id_producto);
-            hayProductosDescontinuados = true;
+            hayProductosDescontinuados = true; // Hay productos descontinuados
         }
         
-        if (!hayProductosDescontinuados) {
+        if (!hayProductosDescontinuados) { // Si no hay productos descontinuados
             System.out.println("No hay productos descontinuados disponibles para eliminar.");
             return;
         }
         
         // Solicitar al usuario que seleccione el producto a eliminar
         System.out.println("Seleccione el ID del producto que desea eliminar (ingrese 0 para cancelar):");
-        int idProductoEliminar = sc.nextInt();
+        int idProductoEliminar = sc.nextInt();  // Leer el ID del producto a eliminar
         
         if (idProductoEliminar == 0) {
             System.out.println("Operacion cancelada.");
@@ -424,28 +423,28 @@ public class GestorProductos {
         if (confirmacion.equalsIgnoreCase("Si")) {
             // Eliminar el producto de la base de datos
             String deleteQuery = "DELETE FROM productos WHERE id_producto = ?";
-            PreparedStatement deleteStmt = con.prepareStatement(deleteQuery);
-            deleteStmt.setInt(1, idProductoEliminar);
-            int rowsAffected = deleteStmt.executeUpdate();
+            PreparedStatement deleteStmt = con.prepareStatement(deleteQuery); // Preparar la consulta
+            deleteStmt.setInt(1, idProductoEliminar); // Establecer el ID del producto a eliminar
+            int rowsAffected = deleteStmt.executeUpdate(); // Ejecutar la consulta DELETE
             
             if (rowsAffected > 0) {
-                System.out.println("Producto con ID " + idProductoEliminar + " eliminado correctamente.");
+                System.out.println("Producto con ID " + idProductoEliminar + " eliminado correctamente."); //Mensaje de confirmación
             } else {
-                System.out.println("Error al eliminar el producto con ID " + idProductoEliminar + ".");
+                System.out.println("Error al eliminar el producto con ID " + idProductoEliminar + "."); //Mensaje de error
             }
         } else {
             System.out.println("Eliminación cancelada.");
         }
         
     } catch (SQLException e) {
-        System.out.println("Error al acceder a la base de datos: " + e.getMessage());
+        System.out.println("Error al acceder a la base de datos: " + e.getMessage()); //Mensaje de error
     } finally {
         try {
-            if (rs != null) rs.close();
-            if (ps != null) ps.close();
-            if (con != null) con.close();
+            if (rs != null) rs.close(); // Cerrar el ResultSet
+            if (ps != null) ps.close(); // Cerrar el PreparedStatement
+            if (con != null) con.close(); // Cerrar la conexión
         } catch (SQLException e) {
-            System.out.println("Error al cerrar recursos: " + e.getMessage());
+            System.out.println("Error al cerrar recursos: " + e.getMessage()); //Mensaje de error
         }
     }
 }
@@ -453,30 +452,30 @@ public class GestorProductos {
 
  // Método para exportar los productos a un archivo JSON
  public void exportarProductosAJson() {
-    List<Producto> listaProductos = new ArrayList<>();
-    String query = "SELECT * FROM productos";
+    List<Producto> listaProductos = new ArrayList<>(); // Lista para almacenar los productos
+    String query = "SELECT * FROM productos"; // Consulta para obtener todos los productos
     
     try {
-        Class.forName("com.mysql.cj.jdbc.Driver");
+        Class.forName("com.mysql.cj.jdbc.Driver"); // Cargar el driver de MySQL (no necesario en versiones recientes de Java)
         try (Connection con = DriverManager.getConnection(Url, User, Pass);
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             
-            while (rs.next()) {
+            while (rs.next()) { // Mientras haya productos
                 Timestamp ts = rs.getTimestamp("FechaCreacion");
                 LocalDate fecha = ts != null ? ts.toLocalDateTime().toLocalDate():LocalDate.now();
                 Producto prod = new Producto(
-                    rs.getString("Nombre"),
+                    rs.getString("Nombre"), // Obtener los datos del producto
                     rs.getString("Descripcion"),
                     rs.getDouble("Precio"),
                     rs.getInt("Stock"),
-                    rs.getInt("id_producto"),       // Asegúrate de que el nombre de la columna sea correcto
+                    rs.getInt("id_producto"),   
                     rs.getInt("Id_categoria"),
                     rs.getString("Imagen"),
                     rs.getString("Descontinuado"),
                     fecha
                 );
-                listaProductos.add(prod);
+                listaProductos.add(prod); // Agregar el producto a la lista
             }
         }
         
@@ -484,9 +483,9 @@ public class GestorProductos {
         //Gson es una libreria de google para facilitar la conversion de objetos java a JSON
         Gson gson = new GsonBuilder()
         .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, typeOfSrc, context) ->
-        new JsonPrimitive(src.toString()))
-        .setPrettyPrinting()
-        .create();
+        new JsonPrimitive(src.toString())) // Convertir LocalDate a String
+        .setPrettyPrinting() // Formatear el JSON
+        .create(); // Crear el objeto Gson
     String json = gson.toJson(listaProductos);
         // Escribir el JSON en un archivo
         try (FileWriter writer = new FileWriter("productos.json")) {
@@ -498,7 +497,8 @@ public class GestorProductos {
     } catch (ClassNotFoundException | SQLException e) {
         System.out.println("Error en la conexión o consulta: " + e.getMessage());
     }
-}
+} 
+// Método para exportar productos con alta ganancia a un archivo JSON
 public void exportarProductosConAltaGananciaAJson() {
         String query = "SELECT p.id_producto, p.nombre, p.descripcion, p.precio, p.Stock, p.imagen, p.Id_categoria, p.FechaCreacion, p.descontinuado, SUM(dp.Cantidad * dp.Precio) AS ganancia " +
                        "FROM productos p " +
@@ -548,7 +548,7 @@ public void exportarProductosConAltaGananciaAJson() {
             System.out.println("Error en la conexión o consulta: " + e.getMessage());
         }
     }
-
+    //Prevenir errores de conexión a la base de datos
     private Connection obtenerConexion() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -561,13 +561,13 @@ public void exportarProductosConAltaGananciaAJson() {
 
     // Método para obtener el total de ganancias
     public void exportarTotalGananciasAJson() {
-        String query = "SELECT SUM(PrecioTotal) as TotalGanancias FROM pedidos";
+        String query = "SELECT SUM(PrecioTotal) as TotalGanancias FROM pedidos"; // Consulta para obtener el total de ganancias
         ejecutarConsultaYExportarAJson(query, "total_ganancias.json");
     }
 
     // Método para obtener productos con stock bajo
     public void exportarProductosBajoStockAJson() {
-        String query = "SELECT Nombre as Productos_BajoStock FROM productos WHERE Stock < 5";
+        String query = "SELECT Nombre as Productos_BajoStock FROM productos WHERE Stock < 5"; // Consulta para obtener productos con stock bajo
         ejecutarConsultaYExportarAJson(query, "productos_bajo_stock.json");
     }
 
@@ -578,7 +578,7 @@ public void exportarProductosConAltaGananciaAJson() {
                        "JOIN pedidos p ON u.id_user = p.id_user " +
                        "GROUP BY u.id_user, u.nombre " +
                        "ORDER BY total_pedidos DESC " +
-                       "LIMIT 10";
+                       "LIMIT 10"; // Consulta para obtener los 10 clientes con más pedidos
         ejecutarConsultaYExportarAJson(query, "clientes_con_mas_pedidos.json");
     }
 
@@ -587,7 +587,7 @@ public void exportarProductosConAltaGananciaAJson() {
         String query = "SELECT MONTH(FechaPedido) as mes, SUM(PrecioTotal) as ganancias " +
                        "FROM pedidos " +
                        "GROUP BY mes " +
-                       "ORDER BY mes ASC";
+                       "ORDER BY mes ASC"; // Consulta para obtener las ganancias por mes
         ejecutarConsultaYExportarAJson(query, "ganancias_por_mes.json");
     }
 
@@ -596,13 +596,13 @@ public void exportarProductosConAltaGananciaAJson() {
         String query = "SELECT p.id_producto as PRODUCTO_ID, p.nombre as PRODUCTOS_MENOS_COMPRADOS " +
                        "FROM productos p " +
                        "LEFT JOIN detalle_pedido dp ON p.id_producto = dp.id_producto " +
-                       "WHERE dp.id_producto IS NULL";
+                       "WHERE dp.id_producto IS NULL"; // Consulta para obtener productos nunca comprados
         ejecutarConsultaYExportarAJson(query, "productos_nunca_comprados.json");
     }
 
     // Método genérico para ejecutar una consulta y exportar el resultado a JSON
     private void ejecutarConsultaYExportarAJson(String query, String nombreArchivo) {
-        List<Object> resultados = new ArrayList<>();
+        List<Object> resultados = new ArrayList<>(); // Lista para almacenar los resultados
         try (Connection con = DriverManager.getConnection(Url, User, Pass);
              PreparedStatement ps = con.prepareStatement(query);
              ResultSet rs = ps.executeQuery()) {
@@ -612,11 +612,11 @@ public void exportarProductosConAltaGananciaAJson() {
 
             while (rs.next()) {
                 // Crear un mapa para almacenar los datos de cada fila
-                Map<String, Object> fila = new HashMap<>();
-                for (int i = 1; i <= columnCount; i++) {
-                    fila.put(metaData.getColumnLabel(i), rs.getObject(i));
+                Map<String, Object> fila = new HashMap<>(); // HashMap para almacenar los datos de cada fila
+                for (int i = 1; i <= columnCount; i++) { // Recorrer las columnas
+                    fila.put(metaData.getColumnLabel(i), rs.getObject(i)); // Agregar el dato al mapa
                 }
-                resultados.add(fila);
+                resultados.add(fila); // Agregar el mapa a la lista de resultados
             }
 
             // Convertir la lista de resultados a JSON utilizando Gson
@@ -625,21 +625,21 @@ public void exportarProductosConAltaGananciaAJson() {
             new JsonPrimitive(src.toString()))
             .setPrettyPrinting()
             .create();
-            String json = gson.toJson(resultados);
+            String json = gson.toJson(resultados); // Convertir la lista a JSON
 
             // Escribir el JSON en un archivo
             try (FileWriter writer = new FileWriter(nombreArchivo)) {
-                writer.write(json);
-                System.out.println("Datos exportados a " + nombreArchivo);
+                writer.write(json); // Escribir el JSON en el archivo
+                System.out.println("Datos exportados a " + nombreArchivo); 
             } catch (IOException e) {
-                System.out.println("Error al escribir el archivo JSON: " + e.getMessage());
+                System.out.println("Error al escribir el archivo JSON: " + e.getMessage()); //Mensaje de error si hay un error al escribir el archivo JSON
             }
         } catch (SQLException e) {
-            System.out.println("Error en la conexión o consulta: " + e.getMessage());
+            System.out.println("Error en la conexión o consulta: " + e.getMessage()); //Mensaje de error si hay un error en la conexión o consulta
         }
     }
 
-public void ListarProd() {
+public void ListarProd() { //Metodo para listar productos
     Connection con = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -653,9 +653,9 @@ public void ListarProd() {
         System.out.println("1. Todos los productos");
         System.out.println("2. Productos por categoría");
         int opcionCategoria = sc.nextInt();
-        sc.nextLine(); // Limpiar el buffer
+        sc.nextLine(); // Salto de linea
 
-        int categoriaSeleccionada = -1;
+        int categoriaSeleccionada = -1; // Categoría seleccionada por el usuario
         String query = "";
         
         if (opcionCategoria == 2) {
@@ -668,7 +668,7 @@ public void ListarProd() {
             System.out.println("5 | Chaquetas");
             System.out.println("Selecciona un numero: ");
             
-            categoriaSeleccionada = sc.nextInt();
+            categoriaSeleccionada = sc.nextInt(); //Preguntamos al usuario que categoria desea
             query = "SELECT * FROM productos WHERE id_categoria = ?";
         } else {
             // Si elige todos los productos
@@ -687,7 +687,7 @@ public void ListarProd() {
         System.out.println("1. Ordenar por precio");
         System.out.println("2. Ordenar por stock");
         int opcionOrdenar = sc.nextInt();
-        sc.nextLine(); // Limpiar el buffer
+        sc.nextLine(); // Salto de linea
 
         String orden = "";
         if (opcionOrdenar == 1) {
@@ -739,7 +739,7 @@ public void ListarProd() {
 }
 
     
-public void BusquedaProd() {
+public void BusquedaProd() { //Metodo para buscar productos
     Connection con = null;
     PreparedStatement ps = null;
     ResultSet rs=null;
@@ -793,35 +793,35 @@ public void BusquedaProd() {
         }
     }
 }
-    public ArrayList<Producto> getProductos(){
+    public ArrayList<Producto> getProductos(){ //Metodo para obtener los productos  
         return productos;
     } 
 
-    public void setProductos(ArrayList<Producto> productos) {
+    public void setProductos(ArrayList<Producto> productos) { //Metodo para establecer los productos
         this.productos = productos;
     }
 
-    public String getPass() {
+    public String getPass() { //Metodo para obtener la contraseña
         return Pass;
     }
 
-    public void setPass(String Pass) {
+    public void setPass(String Pass) { //Metodo para establecer la contraseña
         this.Pass = Pass;
     }
 
-    public String getUrl() {
+    public String getUrl() { //Metodo para obtener la URL
         return Url;
     }
 
-    public void setUrl(String Url) {
+    public void setUrl(String Url) {    //Metodo para establecer la URL
         this.Url = Url;
     }
 
-    public String getUser() {
+    public String getUser() { //Metodo para obtener el usuario
         return User;
     }
 
-    public void setUser(String User) {
+    public void setUser(String User) { //Metodo para establecer el usuario
         this.User = User;
     }
 }
