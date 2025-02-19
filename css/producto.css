@@ -1,0 +1,309 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.Navegador img {
+    height: 2rem;
+    width: 2rem;
+    padding: 1rem;
+}
+
+.Navegador li {
+    display: inline;
+    z-index: 1;
+}
+
+.Navegador img:hover {
+    cursor: pointer;
+    filter: invert();
+}
+
+#LogoNav {
+    padding: 0px;
+    margin: 0px;
+    height: 5rem;
+    width: 5rem;
+    padding-left: 1rem;
+}
+
+#LogoNav:hover {
+    cursor: pointer;
+    filter: invert();
+}
+
+.Navegador {
+    background-color: #E3C205;
+    padding: 20px 0;
+    margin: 0px;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Navegador h2 {
+    text-align: center;
+    font-family: "IBM Plex Serif", serif;
+    animation-name: Aparecer;
+    text-shadow: 5px 5px 5px rgb(144, 110, 0);
+    animation-duration: 4s;
+    font-size: 3rem;
+  }
+  
+  @keyframes Aparecer {
+    from { opacity: 0; }
+    to { opacity: 100%; }
+  }
+
+.Navegador ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+}
+
+.Navegador li {
+    display: flex;
+    align-items: center;
+}
+
+.Navegador img {
+    width: 30px;
+    height: auto;
+    cursor: pointer;
+}
+
+/* Estilos para el contenedor de categorías */
+#categorias {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+/* Estilos para cada categoría */
+.categoria {
+    width: 200px;  
+    height: 300px;
+    margin: 15px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+/* Efecto hover (opcional) */
+.categoria:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+/* Estilos para las imágenes */
+.categoria img {
+    width: 100%;  /* Se adapta al ancho del contenedor */
+    height: auto;
+}
+
+/* Estilos para el texto de la categoría */
+.categoria span {
+    display: block;
+    font-size: 1.5rem;  /* Aumenta el tamaño de la fuente */
+    margin-top: 10px;
+}
+
+@keyframes Aparecer {
+    from { opacity: 0%; }
+    to { opacity: 100%; }
+}
+
+#productoContainer {
+    display: inline-block;
+    background-color: white;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#productos {
+    width: 80%;
+    max-width: 1000px;
+    margin: 30px auto;
+    text-align: center;
+}
+
+#productosLista {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+#productoContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.producto {
+    box-shadow: 5px 5px 5px 5px rgb(98, 97, 97);
+    border-style: groove;
+    width: 12rem;
+    margin-right: 2rem;
+}
+
+.producto img {
+    width: 12rem;
+    height: 12rem;
+    border-radius: 5px;
+}
+
+.producto:hover {
+    box-shadow: 6px 6px 6px 6px rgb(17, 16, 16);
+    cursor: pointer;
+}
+
+.producto h2 {
+    font-family: "IBM Plex Serif", serif;
+    margin: 10px;
+}
+
+.producto h2:hover {
+    cursor: pointer;
+}
+
+.producto p {
+    text-align: center;
+    color: rgb(125, 125, 138);
+}
+#detalle {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+    align-items: center;
+  }
+  
+  #detalleImagen {
+    max-width: 100%;
+    height: 300px;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+  }
+  
+  #detalleImagen:hover {
+    transform: scale(1.05);
+  }
+  
+  #detalleTitulo {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  #detalleDescripcion {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+  }
+  
+  #detallePrecio {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #e74c3c;
+    margin-bottom: 20px;
+  }
+  
+  #detalle button,
+  #btnCarrito {
+    padding: 10px 20px;
+    background-color: #3498db;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  #detalle button:hover,
+  #btnCarrito:hover {
+    background-color: #2980b9;
+  }
+  
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+
+button {
+    background-color: #2e3a87;
+    color: white;
+    padding: 10px 15px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #1f2a6d;
+}
+
+footer .contacto {
+    background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+    color: #f1f1f1;
+    padding: 25px 20px;
+    border-top: 3px solid #E3C205; /* Línea amarilla para resaltar */
+    text-align: center;
+    box-shadow: 0px -3px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 12px 12px 0 0;
+    margin-top: 30px;
+    font-family: 'IBM Plex Serif', serif;
+    transition: transform 0.3s ease;
+}
+
+footer .contacto:hover {
+    transform: translateY(-3px);
+}
+
+/* Mensaje de envío pegado a la línea amarilla */
+footer .contacto .envio-rapido {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #E3C205;
+    margin-bottom: 10px;
+    margin-top: -10px;
+}
+
+footer .contacto h2 {
+    font-size: 2em;
+    margin-bottom: 12px;
+    color: #E3C205;
+    font-weight: 600;
+}
+
+footer .contacto p,
+footer .contacto address {
+    font-size: 1.2em;
+    margin: 6px 0;
+    line-height: 1.4;
+}
+
+/* Enlaces en un gris bonito */
+footer .contacto a {
+    color: #bbb;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer .contacto a:hover {
+    color: #fff;
+}

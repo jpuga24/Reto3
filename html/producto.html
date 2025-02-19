@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UsurbilTex</title>
+    
+    <!-- Enlace a hoja de estilos -->
+    <link rel="stylesheet" href="/css/producto.css">
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/imgs/LogoCompletoSinFondo.png" type="image/x-icon">
+    
+    <!-- Fuente desde Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+</head>
+<body onload="cargarProductos()">
+    <header>
+        <!-- Barra de navegación -->
+        <nav class="Navegador">
+            <!-- Logo con enlace a la página principal -->
+            <a href="index.html"><img src="/imgs/LogoSoloSinFondo.png" alt="" id="LogoNav"></a>
+            <h2>Categorías disponibles</h2>
+            <ul>
+                <li><a href="estadisticas.html"><img src="/imgs/Usuarioicono.png" alt="Icono Usuario"></a></li>
+                <li><a href="carrito.html"><img src="/imgs/CestaIcono.png" alt="Icono Cesta"></a></li>
+                <li><img src="/imgs/BuscadorIcono.png" alt="Icono Buscador"></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        
+        
+        <!-- Contenedor de categorías -->
+        <div id="categorias">
+            <div class="categoria" onclick="mostrarCategoria('Camisas')">
+                <img src="/imgs/Camisa.png" alt="Camisas">
+                <span>Camisas</span>
+            </div>
+            <div class="categoria" onclick="mostrarCategoria('Camisetas')">
+                <img src="/imgs/CamiDepor1.png" alt="Camisetas">
+                <span>Camisetas</span>
+            </div>
+            <div class="categoria" onclick="mostrarCategoria('Pantalones')">
+                <img src="/imgs/pantalondepor1.png" alt="Pantalones">
+                <span>Pantalones</span>
+            </div>
+            <div class="categoria" onclick="mostrarCategoria('Sudaderas')">
+                <img src="/imgs/sudaderadepor.png" alt="Sudaderas">
+                <span>Sudaderas</span>
+            </div>
+            <div class="categoria" onclick="mostrarCategoria('Chaquetas')">
+                <img src="/imgs/ChaquetNike.png" alt="Chaquetas">
+                <span>Chaquetas</span>
+            </div>
+        </div>
+
+        <!-- Contenedor para mostrar los productos -->
+        <div id="productoContainer"></div>
+
+        <!-- Sección de productos según la categoría seleccionada -->
+        <div id="productos" style="display: none;">
+            <button onclick="volverInicio()">← Volver</button>
+            <h2 id="categoriaTitulo"></h2>
+            <div id="productosLista"></div>
+        </div>
+
+        <!-- Detalle del producto seleccionado -->
+        <div id="detalle" style="display: none;">
+            <button onclick="volverInicio()">← Volver</button>
+            <h2 id="detalleTitulo"></h2>
+            <img id="detalleImagen"  alt="Producto">
+            <p id="detalleDescripcion"></p>
+            <p id="detallePrecio"></p>
+            <button>Añadir a la cesta</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="contacto">
+            <div class="envio-rapido">ENVÍO 24 HORAS</div>
+            <h2>Contacto</h2>
+            <p>Teléfono: <a href="tel:+34123456789">+34 123 456 789</a></p>
+            <p>Email: <a href="mailto:info@usurbiltex.com">info@usurbiltex.com</a></p>
+            <address>Dirección: Calle Usurbil, 14, Usurbil, España</address>
+        </div>
+    </footer>
+
+    <!-- Scripts para manejo de productos y carrito -->
+    <script src="/scripts/producto.js" defer></script>
+</body>
+</html>
