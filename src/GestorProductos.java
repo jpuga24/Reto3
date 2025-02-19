@@ -457,7 +457,7 @@ public class GestorProductos {
              ResultSet rs = stmt.executeQuery(query)) {
             
             while (rs.next()) {
-                Timestamp ts = rs.getTimestamp("fechaCreacion");
+                Timestamp ts = rs.getTimestamp("FechaCreacion");
                 LocalDate fecha = ts != null ? ts.toLocalDateTime().toLocalDate():LocalDate.now();
                 Producto prod = new Producto(
                     rs.getString("Nombre"),
@@ -476,8 +476,12 @@ public class GestorProductos {
         
         // Convertir la lista de productos a JSON utilizando Gson
         //Gson es una libreria de google para facilitar la conversion de objetos java a JSON
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String json = gson.toJson(listaProductos);
+        Gson gson = new GsonBuilder()
+        .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, typeOfSrc, context) ->
+        new JsonPrimitive(src.toString()))
+        .setPrettyPrinting()
+        .create();
+    String json = gson.toJson(listaProductos);
         // Escribir el JSON en un archivo
         try (FileWriter writer = new FileWriter("productos.json")) {
             writer.write(json);
@@ -490,7 +494,7 @@ public class GestorProductos {
     }
 }
 public void exportarProductosConAltaGananciaAJson() {
-        String query = "SELECT p.id_producto, p.nombre, p.descripcion, p.precio, p.Stock, p.imagen, p.Id_categoria, p.fechaCreacion, p.descontinuado, SUM(dp.Cantidad * dp.Precio) AS ganancia " +
+        String query = "SELECT p.id_producto, p.nombre, p.descripcion, p.precio, p.Stock, p.imagen, p.Id_categoria, p.FechaCreacion, p.descontinuado, SUM(dp.Cantidad * dp.Precio) AS ganancia " +
                        "FROM productos p " +
                        "JOIN detalle_pedido dp ON p.id_producto = dp.id_producto " +
                        "GROUP BY p.id_producto, p.nombre " +
@@ -504,6 +508,8 @@ public void exportarProductosConAltaGananciaAJson() {
             List<Producto> listaProductos = new ArrayList<>();
 
             while (rs.next()) {
+                Timestamp ts = rs.getTimestamp("FechaCreacion");
+                LocalDate fecha = ts != null ? ts.toLocalDateTime().toLocalDate():LocalDate.now();
                 Producto producto = new Producto(
                     rs.getString("nombre"),
                     rs.getString("descripcion"),
@@ -513,21 +519,16 @@ public void exportarProductosConAltaGananciaAJson() {
                     rs.getInt("Id_categoria"),
                     rs.getString("imagen"),
                     rs.getString("descontinuado"),
-                    rs.getTimestamp("fechaCreacion").toLocalDateTime().toLocalDate()
+                    fecha
                 );
                 listaProductos.add(producto);
             }
 
             Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Timestamp.class, new JsonSerializer<Timestamp>() {
-                    @Override
-                    public JsonElement serialize(Timestamp src, Type typeOfSrc, JsonSerializationContext context) {
-                        return new JsonPrimitive(src.toInstant().toString());
-                    }
-                })
-                .setPrettyPrinting()
-                .create();
-
+            .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, typeOfSrc, context) ->
+            new JsonPrimitive(src.toString()))
+            .setPrettyPrinting()
+            .create();
             String json = gson.toJson(listaProductos);
 
             try (FileWriter writer = new FileWriter("productos_ganancia.json")) {
@@ -613,7 +614,11 @@ public void exportarProductosConAltaGananciaAJson() {
             }
 
             // Convertir la lista de resultados a JSON utilizando Gson
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, typeOfSrc, context) ->
+            new JsonPrimitive(src.toString()))
+            .setPrettyPrinting()
+            .create();
             String json = gson.toJson(resultados);
 
             // Escribir el JSON en un archivo

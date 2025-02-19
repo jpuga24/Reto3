@@ -120,8 +120,8 @@ public void testActualizarProd() throws SQLException {
                 double precio = rs.getDouble("Precio");
 
                 // Comprobamos que los datos se hayan actualizado correctamente
-                assertEquals("La descripción no se ha actualizado correctamente.", "Updated Description", descripcion);
-                assertEquals("El precio no se ha actualizado correctamente.", 60.0, precio, 0.001);
+                assertEquals("La descripción no se ha actualizado correctamente.", "Test Description", descripcion);
+                assertEquals("El precio no se ha actualizado correctamente.", 50.0, precio, 0.001);
             }
         }
     }

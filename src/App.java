@@ -1,5 +1,7 @@
 import java.util.*;
+//Libreria util de java que incluye Scanner
 import java.time.LocalDate;
+//Libreria para el manejo de la fecha (FechaCreacion)
 public class App {
 
     // Variable para el ID del producto
@@ -23,7 +25,7 @@ public class App {
     // Método de validación de login
     public static boolean ValidarLogin(Scanner sc, String usuario, String contraseña) {
         boolean acceso = false;
-        while (!acceso) {
+        while (!acceso) {//Mientras el usuario no pueda acceder se le pide que introduzca el usuario y la contraseña
             System.out.print("Introduce el usuario: ");
             String UsuarioIntroducido = sc.nextLine();
             System.out.print("Introduce la contraseña: ");

@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+//Creamos esta clase para prevenir errores de conexión a la base de datos
 
 public class ConexionBD {
     // Datos de conexión
@@ -11,10 +12,10 @@ public class ConexionBD {
     public static Connection conectar() {
         Connection conexion = null;
         try {
-            // Cargar el driver (opcional desde Java 6 en adelante)
+            // Cargar el driver (opcional)
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Establecer conexión
+            // Estableciendo conexión
             conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
             System.out.println("Conexión exitosa a la base de datos");
         } catch (ClassNotFoundException e) {
