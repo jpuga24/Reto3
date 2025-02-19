@@ -194,4 +194,59 @@ a {
   .producto {
     flex: 0 0 100%;
   }
+<<<<<<< HEAD
 }
+=======
+}
+
+footer .contacto {
+  background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+  color: #f1f1f1;
+  padding: 25px 20px;
+  border-top: 3px solid #E3C205; /* Línea amarilla para resaltar */
+  text-align: center;
+  box-shadow: 0px -3px 12px rgba(0, 0, 0, 0.2);
+  border-radius: 12px 12px 0 0;
+  margin-top: 30px;
+  font-family: 'IBM Plex Serif', serif;
+  transition: transform 0.3s ease;
+}
+
+footer .contacto:hover {
+  transform: translateY(-3px);
+}
+
+/* Mensaje de envío pegado a la línea amarilla */
+footer .contacto .envio-rapido {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #E3C205;
+  margin-bottom: 10px;
+  margin-top: -10px;
+}
+
+footer .contacto h2 {
+  font-size: 2em;
+  margin-bottom: 12px;
+  color: #E3C205;
+  font-weight: 600;
+}
+
+footer .contacto p,
+footer .contacto address {
+  font-size: 1.2em;
+  margin: 6px 0;
+  line-height: 1.4;
+}
+
+/* Enlaces en un gris bonito */
+footer .contacto a {
+  color: #bbb;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer .contacto a:hover {
+  color: #fff;
+}
+>>>>>>> master

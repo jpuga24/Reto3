@@ -11,6 +11,7 @@ function cargarProductos() {
     container.innerHTML = '';  // Limpiar productos anteriores
     let total = 0;
 
+<<<<<<< HEAD
     carrito.forEach(item => {
         // Hacer fetch de cada producto según el ID guardado en el carrito
         fetch(`producto.json${item.id}`)
@@ -37,6 +38,36 @@ function cargarProductos() {
             })
             .catch(error => console.error('Error al cargar productos:', error));
     });
+=======
+    fetch('producto.json')
+        .then(response => response.json())
+        .then(productos => {
+            carrito.forEach(item => {
+                const producto = productos.find(p => p.id_producto === item.id);
+                if (producto) {
+                    const div = document.createElement('div');
+                    div.classList.add('producto');
+                    div.innerHTML = `
+                        <img src="${producto.imagen}" alt="${producto.nombre}">
+                        <div class="detalles">
+                            <strong>${producto.nombre}</strong><br>
+                            <span class="precio">${producto.precio}€</span>
+                        </div>
+                        <div class="cantidad">
+                            <button onclick="cambiarCantidad(${item.id}, -1)">-</button>
+                            <span>${item.cantidad}</span>
+                            <button onclick="cambiarCantidad(${item.id}, 1)">+</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                    total += producto.precio * item.cantidad;
+                }
+            });
+            document.getElementById('total').innerText = `Total: ${total.toFixed(2)}€`;
+            actualizarEnvio(total);
+        })
+        .catch(error => console.error('Error al cargar productos:', error));
+>>>>>>> master
 }
 
 
