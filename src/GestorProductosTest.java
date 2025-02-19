@@ -135,7 +135,7 @@ public void testActualizarProd() throws SQLException {
 }
 
 
-    // Test de Eliminar Producto
+    
     
     
 

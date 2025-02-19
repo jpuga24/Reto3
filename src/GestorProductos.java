@@ -1,17 +1,20 @@
-import java.io.*;
-import java.sql.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.io.*; // Librerias para manejo de archivos
+import java.sql.*; // Librerias para manejo de base de datos
+import java.time.LocalDate; // Librerias para manejo de fechas
+import java.time.format.DateTimeParseException; // Librerias para manejo de fechas
+import java.util.*; //Libreria para Scanner, ArrayList
+
+ //Libreria para convertir objetos Java a JSON
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.GsonBuilder; 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import java.lang.reflect.Type;
+import java.lang.reflect.Type; 
 
-
+//Esta clase se encarga de gestionar los productos osea que se encarga de
+//agregar, actualizar, eliminar, listar, buscar y exportar productos
 public class GestorProductos {
     Scanner sc=new Scanner(System.in);
     //Conexion a la BBDD
@@ -19,12 +22,13 @@ public class GestorProductos {
     private String Url="jdbc:mysql://localhost:3306/usurbiltex";
     private String Pass="Lymprr1982@!";
     private Scanner scanner;
-    public void setScanner(Scanner scanner) {
+
+    public void setScanner(Scanner scanner) { //Metodo para establecer el scanner
         this.scanner = scanner;
     }
-    private ArrayList<Producto> productos = new ArrayList<>();
+    private ArrayList<Producto> productos = new ArrayList<>(); //Lista de productos, el arraylist nos permite manipular los productos
     //Metodos para manipular productos
-    public void AgregarProd(Producto producto) {
+    public void AgregarProd(Producto producto) { //Metodo para agregar productos
         // Verificar si la categoría existe antes de insertar el producto
         if (!categoriaExiste(producto.getId_categoria())) {
             System.out.println("Error: La categoría con id " + producto.getId_categoria() + " no existe.");
@@ -32,12 +36,13 @@ public class GestorProductos {
         }
     
         // Definimos la query para insertar un producto
-        String queryAgg = "INSERT INTO productos (Nombre, Descripcion, Precio, Stock, Id_categoria, Descontinuado, Imagen) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String queryAgg = "INSERT INTO productos (Nombre, Descripcion, Precio, Stock, Id_categoria, Descontinuado, Imagen) VALUES (?, ?, ?, ?, ?, ?, ?)"; //Valores pendientes a insertar
     
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            try (Connection con = DriverManager.getConnection(Url, User, Pass);
-                         PreparedStatement ps = con.prepareStatement(queryAgg)) {
+        try { // Intentar conectarse a la base de datos
+            Class.forName("com.mysql.cj.jdbc.Driver"); //Esto carga el driver de la BBDD, no es necesario en versiones recientes de Java
+            try (Connection con = DriverManager.getConnection(Url, User, Pass); //Establecemos la conexión a la BBDD
+                         PreparedStatement ps = con.prepareStatement(queryAgg)) { //Le enviamos la query de agregar a la BBDD
+                            //Cogemos los datos del producto y los insertamos en la BBDD
                         ps.setString(1, producto.getNombre());
                         ps.setString(2, producto.getDescripcion());
                         ps.setInt(3, (int) producto.getPrecio()); // Convertir a int
@@ -47,15 +52,16 @@ public class GestorProductos {
                         ps.setString(7, producto.getImagen());
         
                         int resultado = ps.executeUpdate();
+                        //Si el resultado es mayor a 0, el producto se ha insertado correctamente
         
-                        if (resultado > 0) {
+                        if (resultado > 0) { //Si el producto se ha insertado correctamente
                             System.out.println("Producto añadido a la base de datos correctamente: " + producto.getNombre());
                         }
-                    } catch (SQLException e) {
-                        System.out.println("Error al insertar producto: " + e.getMessage());
+                    } catch (SQLException e) { //Si hay error agregando un producto
+                        System.out.println("Error al insertar producto: " + e.getMessage()); // Mensaje para saber motivo de error al ingresar un producto
                     }
-                } catch (ClassNotFoundException e) {
-                    System.out.println("Error al cargar el driver de la base de datos: " + e.getMessage());
+                } catch (ClassNotFoundException e) { //Si hay un error en la conexión a la BBDD
+                    System.out.println("Error al cargar el driver de la base de datos: " + e.getMessage()); //Mensaje de error al cargar el driver de la BBDD o algun eror relacionado
                 }
             }
     
